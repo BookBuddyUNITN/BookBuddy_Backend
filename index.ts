@@ -1,4 +1,4 @@
-import DB from "./database/db.js"
+import DB from "./database/db"
 import * as dotenv from 'dotenv'
 
 const envs = dotenv.config()

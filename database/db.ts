@@ -2,7 +2,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 
 export default class DB {
     client = null;
-    constructor(username, password) {
+    constructor(username : string, password : string) {
         const uri = "mongodb+srv://" + username + ":" + password + "@bookbuddy.lcnowqs.mongodb.net/?retryWrites=true&w=majority";
         this.client = new MongoClient(uri, {
             serverApi: {
