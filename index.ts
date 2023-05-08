@@ -25,8 +25,6 @@ const userSchema = new Schema<IUser>({
 // 3. Create a Model.
 const User = model<IUser>('User', userSchema);
 
-
-
 db.connect().then(async () => {
     const user = new User({
         name: 'Bill',
