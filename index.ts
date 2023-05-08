@@ -5,7 +5,7 @@ import { Schema, model } from 'mongoose';
 
 const envs = dotenv.config()
 
-const db = new DB(envs.parsed.MONGO_NAME, envs.parsed.MONGO_PASS, envs.parsed.MONGO_LINK)
+const db = new DB(envs.parsed.MONGO_LINK, envs.parsed.MONGO_PASS)
 
 
 // 1. Create an interface representing a document in MongoDB.
