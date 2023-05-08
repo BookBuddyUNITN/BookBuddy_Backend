@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import recensione from './recensione';
+import recensione from './Recensione';
 
 class recensioneLibro extends recensione {
     id: string;
