@@ -1,5 +1,7 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
+import mongoose from 'mongoose';
+
 export default class DB {
     client = null;
     constructor(username : string, password : string) {
