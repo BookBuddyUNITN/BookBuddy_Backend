@@ -12,7 +12,6 @@ export async function addRecensione(ISBN: string, testo: string, voto: number) {
     return true;
 }
 
-
-
-
-
+export async function getLibri() {
+    return await Libro.find();
+}
