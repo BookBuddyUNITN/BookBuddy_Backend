@@ -9,8 +9,7 @@ const envs = dotenv.config()
 
 const db = new DB(envs.parsed.MONGO_LINK, envs.parsed.MONGO_PASS)
 
-
-
+//PER AVVIARE USARE -> npm run start:nodemon
 
 db.connect().then(async () => {
     runServer();

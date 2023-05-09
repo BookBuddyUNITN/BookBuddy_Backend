@@ -12,6 +12,24 @@ export async function addRecensione(ISBN: string, testo: string, voto: number) {
     return true;
 }
 
+export async function addCopiaLibro(ISBN: string, locazione: string, proprietario: string) {
+    Libro.findOne({ ISBN: ISBN }, (err : any, libro : LibroInterface) => {
+        if (err) return false;
+        libro.copieLibro.push(new copiaLibro(locazione, proprietario));
+    });
+}
+
+export async function getLibro(ISBN: string) {
+    Libro.findOne({ ISBN: ISBN }, (err : any, libro : LibroInterface) => {
+        if (err) return false;
+        return libro;
+    })
+}
+
+export async function deleteLibro(ISBN: string) {
+    return await Libro.deleteOne({ ISBN: ISBN });
+}
+
 export async function getLibri() {
     return await Libro.find();
 }
