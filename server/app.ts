@@ -15,6 +15,8 @@ interface addCopiaLibroInterface {
     proprietario: NonNullable<string>
 }
 
+//TODO: fixare l'error che deve dare in caso arrivi null dal req.body
+
 export default function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
@@ -31,8 +33,9 @@ export default function runServer() {
     })
     app.get("/libro", async (req, res) => {
         try {
-            const libro = req.body as { ISBN: NonNullable<string> }
-            res.send(await getLibro(libro.ISBN))
+            const result = req.body as { ISBN: NonNullable<string> }
+            if (!Object.keys(result).length) throw new Error("ISBN is required")
+            res.send(await getLibro(result.ISBN))
         } catch (e) {
             res.status(400).send({
                 error: e.message
@@ -42,9 +45,10 @@ export default function runServer() {
 
     app.post("/libro", (req, res) => {
         try {
-            const libro = req.body as addLibroInterface
-            addLibro(libro.titolo, libro.autore, libro.ISBN)
-            res.send("Libro added")
+            const result = req.body as addLibroInterface
+            if (!Object.keys(result).length) throw new Error("ISBN is required")
+            addLibro(result.titolo, result.autore, result.ISBN)
+            res.send("result added")
         } catch (e) {
             res.status(400).send({
                 error: e.message
@@ -54,9 +58,10 @@ export default function runServer() {
 
     app.put("/libro", (req, res) => {
         try {
-            const libro = req.body as addCopiaLibroInterface
-            addCopiaLibro(libro.ISBN, libro.locazione, libro.proprietario)
-            res.send("Copia libro added")
+            const result = req.body as addCopiaLibroInterface
+            if (!Object.keys(result).length) throw new Error("ISBN is required")
+            addCopiaLibro(result.ISBN, result.locazione, result.proprietario)
+            res.send("Copia result added")
         } catch (e) {
             res.status(400).send({
                 error: e.message
@@ -66,9 +71,10 @@ export default function runServer() {
 
     app.delete("/libro", (req, res) => {
         try {
-            const libro = req.body as { ISBN: NonNullable<string> }
-            deleteLibro(libro.ISBN)
-            res.send("Libro deleted")
+            const result = req.body as { ISBN: NonNullable<string> }
+            if (!Object.keys(result).length) throw new Error("ISBN is required")
+            deleteLibro(result.ISBN)
+            res.send("result deleted")
         } catch (e) {
             res.status(400).send({
                 error: e.message
