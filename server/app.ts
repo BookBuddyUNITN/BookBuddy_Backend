@@ -1,86 +1,38 @@
 import express from "express"
-import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../database/manager/managerLibri"
+import libriRouter from "./routes/libriRoutes"
+import authRouter from "./routes/authRoutes"
+import dotenv from "dotenv"
+import jwt from "jsonwebtoken"
+
+dotenv.config()
 
 const app = express()
 
-interface addLibroInterface {
-    titolo: NonNullable<string>,
-    autore: NonNullable<string>,
-    ISBN: NonNullable<string>
-}
 
-interface addCopiaLibroInterface {
-    ISBN: NonNullable<string>,
-    locazione: NonNullable<string>,
-    proprietario: NonNullable<string>
-}
+const tokenChecker = function (req, res, next) {
+    // header or url parameters or post parameters
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    if (!token) res.status(401).json({ success: false, message: 'No token provided.' })
+    // decode token, verifies secret and checks expiration
+    jwt.verify(token, process.env.SUPER_SECRET, function (err, decoded) {
+        if (err) res.status(403).json({ success: false, message: 'Token not valid' })
+        else {
+            // if everything is good, save in req object for use in other routes
+            req.loggedUser = decoded;
+            next();
+        }
+    });
+};
 
-//TODO: fixare l'error che deve dare in caso arrivi null dal req.body
 
 export default function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
 
-
-    app.get("/libri", async (req, res) => {
-        try {
-            res.send(await getLibri())
-        } catch (e) {
-            res.status(400).send({
-                error: e.message
-            })
-        }
-    })
-    app.get("/libro", async (req, res) => {
-        try {
-            const result = req.body as { ISBN: NonNullable<string> }
-            if (!Object.keys(result).length) throw new Error("ISBN is required")
-            res.send(await getLibro(result.ISBN))
-        } catch (e) {
-            res.status(400).send({
-                error: e.message
-            })
-        }
-    })
-
-    app.post("/libro", (req, res) => {
-        try {
-            const result = req.body as addLibroInterface
-            if (!Object.keys(result).length) throw new Error("ISBN is required")
-            addLibro(result.titolo, result.autore, result.ISBN)
-            res.send("result added")
-        } catch (e) {
-            res.status(400).send({
-                error: e.message
-            })
-        }
-    })
-
-    app.put("/libro", (req, res) => {
-        try {
-            const result = req.body as addCopiaLibroInterface
-            if (!Object.keys(result).length) throw new Error("ISBN is required")
-            addCopiaLibro(result.ISBN, result.locazione, result.proprietario)
-            res.send("Copia result added")
-        } catch (e) {
-            res.status(400).send({
-                error: e.message
-            })
-        }
-    })
-
-    app.delete("/libro", (req, res) => {
-        try {
-            const result = req.body as { ISBN: NonNullable<string> }
-            if (!Object.keys(result).length) throw new Error("ISBN is required")
-            deleteLibro(result.ISBN)
-            res.send("result deleted")
-        } catch (e) {
-            res.status(400).send({
-                error: e.message
-            })
-        }
-    })
+    app.use("/auth", authRouter)
+    app.use(tokenChecker)
+    app.use("/libro", libriRouter)
+    
 
 
     app.listen(3456, () => {
