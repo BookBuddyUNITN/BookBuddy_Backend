@@ -1,5 +1,8 @@
 import express from "express"
 import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../database/manager/managerLibri"
+import jwt from "jsonwebtoken"
+import { checkUtente } from "../database/manager/managerLogin"
+import crypto from "crypto"
 
 const app = express()
 
@@ -15,13 +18,26 @@ interface addCopiaLibroInterface {
     proprietario: NonNullable<string>
 }
 
+interface Credenziali {
+    username: string;
+    password: string;
+}
+
 //TODO: fixare l'error che deve dare in caso arrivi null dal req.body
+
+function generateToken(username: string, password: string) {
+    var payload = { username: username, password: password }
+    var options = { expiresIn: 86400 } // expires in 24 hours
+    var token = jwt.sign(payload, process.env.SUPER_SECRET, options);
+    
+    return token;
+}
 
 export default function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
-
-
+    
+    
     app.get("/libri", async (req, res) => {
         try {
             res.send(await getLibri())
@@ -42,7 +58,7 @@ export default function runServer() {
             })
         }
     })
-
+    
     app.post("/libro", (req, res) => {
         try {
             const result = req.body as addLibroInterface
@@ -55,7 +71,7 @@ export default function runServer() {
             })
         }
     })
-
+    
     app.put("/libro", (req, res) => {
         try {
             const result = req.body as addCopiaLibroInterface
@@ -68,7 +84,7 @@ export default function runServer() {
             })
         }
     })
-
+    
     app.delete("/libro", (req, res) => {
         try {
             const result = req.body as { ISBN: NonNullable<string> }
@@ -81,8 +97,30 @@ export default function runServer() {
             })
         }
     })
-
-
+    
+    app.post("/users/login", (req, res) => {
+        try {
+            const creds = req.body as Credenziali
+            if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente")
+ 
+            const hashedPw = crypto.createHash('sha256').update(req.body.password).digest('hex'); 
+            
+            if (checkUtente(req.body.username, hashedPw)) {
+                const token = generateToken(creds.username, creds.password);
+                res.status(200).send({
+                    token: token
+                })
+            } else {
+                throw new Error("user not found");
+            }  
+        } catch (e) {
+            res.status(400).send({
+                error: e.message
+            })
+        }
+    }) 
+    
+    
     app.listen(3456, () => {
         console.log("Server running on port 3456")
     })
