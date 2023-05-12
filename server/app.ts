@@ -1,5 +1,9 @@
 import express from "express"
 import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../database/manager/managerLibri"
+import jwt from "jsonwebtoken"
+import { checkUtente, addUtente } from "../database/manager/managerLogin"
+import { sendMail } from "../database/manager/managerMail"
+import crypto from "crypto"
 
 const app = express()
 
@@ -16,6 +20,33 @@ interface addCopiaLibroInterface {
 }
 
 //TODO: fixare l'error che deve dare in caso arrivi null dal req.body
+
+interface Credenziali {
+    username: string;
+    password: string;
+    email?: string;
+}
+
+interface NuovoUtente {
+    username: string;
+    password: string;
+    email: string;
+    token: string;
+}
+
+//TODO: fixare l'error che deve dare in caso arrivi null dal req.body
+
+function generateToken(username: string, password: string, time=86400) {
+    var payload = { username: username, password: password }
+    var options = { expiresIn: time } // expires in 24 hours if not specified
+    var token = jwt.sign(payload, process.env.SUPER_SECRET, options);
+
+    return token;
+}
+
+function verifyToken(username: string, password: string) {
+    return "placeholder";
+}
 
 export default function runServer() {
     app.use(express.json())
@@ -82,6 +113,62 @@ export default function runServer() {
         }
     })
 
+    app.post("/users/login", (req, res) => {
+        try {
+            const creds = req.body as Credenziali
+            if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente")
+
+            const hashedPw = crypto.createHash('sha256').update(req.body.password).digest('hex');
+
+            if (checkUtente(req.body.username, hashedPw)) {
+                const token = generateToken(creds.username, creds.password);
+                res.status(200).send({
+                    token: token
+                })
+            } else {
+                throw new Error("user not found");
+            }
+        } catch (e) {
+            res.status(400).send({
+                error: e.message
+            })
+        }
+    })
+
+    app.post("/users/registrazione", (req, res) => {
+        try {
+            const creds = req.body as Credenziali;
+            if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente");
+            if (!creds.email) throw new Error("email is required");
+            
+            sendMail(creds.email, generateToken(creds.username, creds.password, 300));
+
+            res.send("mail sent with token");
+
+        } catch (e) {
+            res.status(400).send({
+                error: e.message
+            })
+        }
+    })
+
+    app.post("/users/registrazione/token", (req, res) => {
+        try {
+            const creds = req.body as NuovoUtente;
+            if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente");
+            
+            if (verifyToken(creds.username, creds.password) !== creds.token) throw new Error("token non valido o scaduto");
+
+            addUtente(creds.username, creds.password, creds.email);
+
+            res.send("Utente aggiunto");
+
+        } catch (e) {
+            res.status(400).send({
+                error: e.message
+            })
+        }
+    })
 
     app.listen(3456, () => {
         console.log("Server running on port 3456")
