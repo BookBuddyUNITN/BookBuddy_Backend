@@ -1,7 +1,7 @@
 import express from "express"
-import jwt from "jsonwebtoken"
 import authRouter from "./routes/authRoutes"
 import libriRouter from "./routes/libriRoutes"
+import accordoRouter from "./routes/accordoRoutes"
 
 import tokenChecker from "./middleware/tokenChecker"
 
@@ -19,6 +19,7 @@ export default function runServer() {
     app.use("/auth", authRouter)
     app.use(tokenChecker)
     app.use("/libro", libriRouter)
+    app.use("/accordo", accordoRouter)
     
     
     app.listen(3456, () => {
