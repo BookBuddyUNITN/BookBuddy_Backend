@@ -8,6 +8,11 @@ import tokenChecker from "./middleware/tokenChecker"
 const app = express()
 
 
+
+//TODO: fixare l'error che deve dare in caso arrivi null dal req.body
+
+
+
 export default function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
