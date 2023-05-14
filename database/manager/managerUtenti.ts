@@ -10,9 +10,26 @@ export async function getUtente(id: string) {
 }
 
 export async function addAccordoToUtente(accordoID: string, userID: string) {
-    UtenteModel.updateOne({ _id: userID }, { $push: { accordi: accordoID } });
+    if(!accordoID || !userID) {
+        return false;
+    }
+    try {
+        const res = UtenteModel.updateOne({ _id: userID }, { $push: { accordi: accordoID } });
+        return res
+    } catch (err) {
+        return false;
+    }
+
 }
 
 export async function removeAccordo(accordoID: string, userID: string) {
-    UtenteModel.updateOne({ _id: userID }, { $pull: { accordi: accordoID } });
+    if(!accordoID || !userID) {
+        return false;
+    }
+    try {
+        const res = UtenteModel.updateOne({ _id: userID }, { $pull: { accordi: accordoID } });
+        return res
+    } catch (err) {
+        return false;
+    }
 }

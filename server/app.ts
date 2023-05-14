@@ -11,10 +11,6 @@ export default function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
     
-    
-    app.use(express.json())
-    app.use(express.urlencoded({ extended: true }))
-
     app.use("/auth", authRouter)
     app.use(tokenChecker)
     app.use("/libro", libriRouter)
