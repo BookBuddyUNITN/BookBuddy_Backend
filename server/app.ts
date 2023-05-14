@@ -7,7 +7,6 @@ import tokenChecker from "./middleware/tokenChecker"
 
 const app = express()
 
-
 export default function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
