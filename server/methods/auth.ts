@@ -29,7 +29,7 @@ export async function registrazione (req, res) {
 
         const token = generateToken(creds.username, creds.password, 300);
         addUtente(creds.username, creds.password, creds.email, token);
-        sendMail(creds.email, token);
+        sendMail(creds.email, "000000");
 
         res.status(201).send("utente creato, controlla la tua email per confermare l'account");
 
