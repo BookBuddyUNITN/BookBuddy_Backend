@@ -1,17 +1,13 @@
 import mongoose from 'mongoose'
 
 const dataSchema = new mongoose.Schema({
-    anno: Number,
-    mese: Number,
-    giorno: Number,
+    data: Date, // "anno-mese-giorno"
     ora: Number,
     minuti: Number
 })
 
 export interface dataInterface {
-    anno: Number,
-    mese: Number,
-    giorno: Number,
+    data: Date,
     ora: Number,
     minuti: Number
 }
