@@ -9,6 +9,10 @@ export async function getWishlistByUserID(idUtente: string) {
     return await Wishlist.find({ idUtente: idUtente });
 }
 
+export async function getAllWishlist() {
+    return await Wishlist.find({});
+}
+
 export async function deleteFromWishlist(idUtente: string, isbn: string) {
     return await Wishlist.deleteOne({ idUtente: idUtente, isbn: isbn });
 }

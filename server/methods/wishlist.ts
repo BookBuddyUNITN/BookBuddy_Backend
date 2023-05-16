@@ -1,4 +1,4 @@
-import { addWishlist, getWishlistByUserID, deleteFromWishlist } from "../../database/manager/managerWishlist";
+import { addWishlist, getWishlistByUserID, deleteFromWishlist, getAllWishlist } from "../../database/manager/managerWishlist";
 
 interface wishlistElement {
     idUtente: NonNullable<string>,
@@ -31,6 +31,22 @@ export async function getUserWishlistReq(req, res) {
         res.status(200).send({
             success: true,
             message: "Wishlist dell'utente",
+            data: wishlist
+        });
+    }
+    catch (e) {
+        res.status(400).send({
+            error: e.message
+        });
+    }
+}
+
+export async function getAllWishlistReq(req, res) {
+    try {
+        const wishlist = await getAllWishlist();
+        res.status(200).send({
+            success: true,
+            message: "Wishlist di tutti gli utenti",
             data: wishlist
         });
     }

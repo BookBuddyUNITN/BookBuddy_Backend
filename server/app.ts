@@ -2,6 +2,7 @@ import express from "express"
 import jwt from "jsonwebtoken"
 import authRouter from "./routes/authRoutes"
 import libriRouter from "./routes/libriRoutes"
+import wishlistRoutes from "./routes/wishlistRouters"
 
 import tokenChecker from "./middleware/tokenChecker"
 
@@ -24,6 +25,7 @@ export default function runServer() {
     app.use("/auth", authRouter)
     app.use(tokenChecker)
     app.use("/libro", libriRouter)
+    app.use("/wishlist", wishlistRoutes)
     
     
     app.listen(3456, () => {
