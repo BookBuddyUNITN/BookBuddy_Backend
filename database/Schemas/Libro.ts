@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import locationSchema, { locationInterface } from './Location';
 
 export interface LibroInterface {
   titolo: string;
@@ -22,14 +23,22 @@ export class recensione{
 
 export class copiaLibro{
   id: string;
-  locazione: string;
+  locazione: locationInterface;
   proprietario: string;
-  constructor(locazione: string, proprietario: string) {
+  constructor(locazione: locationInterface, proprietario: string) {
     this.id = uuidv4();
     this.locazione = locazione;
     this.proprietario = proprietario;
   }
 }
+
+export interface CopialibroInterface {
+  ISBN: string,
+  id: string;
+  locazione: locationInterface;
+  proprietario: string;
+}
+
 
 export class libro {
   titolo: string;
@@ -54,7 +63,7 @@ const recensioneSchema = new mongoose.Schema({
 
 const copiaLibroSchema = new mongoose.Schema({
   id: { type: String, required: true },
-  locazione: { type: String, required: true },
+  locazione: { type: locationSchema, required: true },
   proprietario: { type: String, required: true },
 });
 

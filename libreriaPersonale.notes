@@ -1,0 +1,8 @@
+changes:
+	added CopiaLibroInterface, with field ISBN to identify the correct book
+	modified location to be locationInterface instead of string
+	modified addCopiaLibro to return a boolean value, that represents success or failure in writing to the db
+
+problems:
+	when deleting a copiaLibro, how do i differentiate between two copies that have the same ISBN?
+		return ID and store those IDs locally for users

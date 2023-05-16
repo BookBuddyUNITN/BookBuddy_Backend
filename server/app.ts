@@ -4,6 +4,7 @@ import libriRouter from "./routes/libriRoutes"
 import cors from "cors"
 import tokenChecker from "./middleware/tokenChecker"
 import scambioRouter from "./routes/scambioRoutes"
+import libreriaPersonaleRouter from "./routes/libreriaPersonaleRouter"
 import wishlistRoutes from "./routes/wishlistRouters"
 
 
@@ -32,6 +33,7 @@ export default function runServer() {
     app.use("/wishlist", wishlistRoutes)
 
     app.use("/scambi", scambioRouter);
+    app.use("/libreriaPersonale", libreriaPersonaleRouter)
     
     
     app.listen(3456, () => {
