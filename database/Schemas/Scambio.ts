@@ -1,19 +1,15 @@
 import mongoose from 'mongoose'
 import Location  from '../classes/Location'
 import Data from '../classes/Data';
-
 import locationSchema from './Location';
-import dataSchema from './Data';
-
-// problem: how to assign ID when creating a new schema?
 
 export interface scambioInterface {
     utente1: string;
     utente2: string;
     libro1ID: string,
     libro2ID: string,
-    luogo: Data;
-    data: Location;
+    luogo: Location;
+    data: Data;
     scambioAccettato: boolean;
 }
 
@@ -24,14 +20,11 @@ export const scambioSchema = new mongoose.Schema({
     libro1ID: String,
     libro2ID: String,
 
-    longitudine: Number,
-    latitudine: Number,
+    location: locationSchema,
 
-    dataAnno: Number,
-    dataMese: Number,
-    dataGiorno: Number,
-    dataOra: Number,
-    dataMinuti: Number,
+    data: Date,
+    ore: Number,
+    minuti: Number,
 
     scambioAccettato: Boolean,
 })

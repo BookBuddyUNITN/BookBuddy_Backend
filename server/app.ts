@@ -1,11 +1,11 @@
 import express from "express"
 import authRouter from "./routes/authRoutes"
 import libriRouter from "./routes/libriRoutes"
+import cors from "cors"
+import tokenChecker from "./middleware/tokenChecker"
+import scambioRouter from "./routes/scambioRoutes"
 import wishlistRoutes from "./routes/wishlistRouters"
 
-import cors from "cors"
-
-import tokenChecker from "./middleware/tokenChecker"
 
 const app = express()
 
@@ -30,6 +30,8 @@ export default function runServer() {
     app.use(tokenChecker)
     app.use("/libro", libriRouter)
     app.use("/wishlist", wishlistRoutes)
+
+    app.use("/scambi", scambioRouter);
     
     
     app.listen(3456, () => {
