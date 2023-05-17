@@ -30,7 +30,7 @@ export async function login(req, res) {
         });
         return;
     }
-    var payload = { username: req.body.username, password: req.body.password }
+    var payload = { id: checkUtenteResult, username: req.body.username, password: req.body.password }
     var options = { expiresIn: 86400 } // expires in 24 hours
     var token = jwt.sign(payload, process.env.SUPER_SECRET, options);
     res.json({
