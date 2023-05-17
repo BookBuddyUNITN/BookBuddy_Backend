@@ -1,12 +1,14 @@
-import {createScambio, removeScambio, accettaScambio} from '../../database/manager/managerScambi'
+import { ObjectId } from 'mongodb';
+import {createScambio, removeScambio, accettaScambio } from '../../database/manager/managerScambi'
 import {locationInterface} from '../../database/Schemas/Location'
-import {dataInterface} from '../../database/Schemas/Data'
+import { scambioInterface } from '../../database/Schemas/Scambio';
 
 interface richiediScambioInterface {
     utente1: string,
     utente2: string,
     location: locationInterface,
-    data: dataInterface 
+    data: Date,
+    scambioAccettato: boolean
 }
 
 interface accettaScambioInterface {
@@ -33,13 +35,16 @@ export async function proponiScambio(req, res) {
 
 export async function annullaScambio(req, res) {
     try{
-        let body = req.body as richiediScambioInterface
-        if (! await removeScambio(body.utente1, body.utente2, body.location, body.data) ){
-            throw new Error("scambio non trovato")
+        let body = req.body as accettaScambioInterface
+        let result = await removeScambio(body.id)
+        
+        if(result.deletedCount === 0) {
+            throw new Error("non ho cancellato niente")
         }
+        
         res.status(200).send({
             success: true,
-            message: "scambio avvenuto con successo",
+            message: "scambio annullato con successo",
             data: {}
         })
     } catch (e) {

@@ -1,14 +1,14 @@
 import mongoose from 'mongoose'
 import Location  from '../classes/Location'
 import Data from '../classes/Data';
-import locationSchema from './Location';
+import locationSchema, { locationInterface } from './Location';
 
 export interface scambioInterface {
     utente1: string;
     utente2: string;
     libro1ID: string,
     libro2ID: string,
-    luogo: Location;
+    location: locationInterface;
     data: Data;
     scambioAccettato: boolean;
 }
@@ -23,8 +23,6 @@ export const scambioSchema = new mongoose.Schema({
     location: locationSchema,
 
     data: Date,
-    ore: Number,
-    minuti: Number,
 
     scambioAccettato: Boolean,
 })

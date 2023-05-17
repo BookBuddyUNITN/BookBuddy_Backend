@@ -1,31 +1,25 @@
-import scambioModel from '../Schemas/Scambio'
+import scambioModel, { scambioInterface } from '../Schemas/Scambio'
 import { locationInterface } from '../Schemas/Location';
-import { dataInterface } from '../Schemas/Data';
+import mongoose from 'mongoose';
 
-export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: dataInterface, scambioAccettato: boolean = false) {
+export async function createScambio(utente1: string, utente2: string, location: locationInterface, data: Date, scambioAccettato: boolean = false) {
     const scambio = new scambioModel({
         utente1: utente1, utente2: utente2, 
-        longitudine: luogo.long, latitudine: luogo.lat, 
-        data: data.data, ora: data.ora, minuti: data.minuti,
+        location: {long: location.long, lat: location.lat}, 
+        data: data,
         scambioAccettato: scambioAccettato}); 
     let newId = ""
     await scambio.save()
-        .then(result => {
-            newId = result._id.toString()
-        })
+        .then(result => newId = result._id.toString())
     return newId
 }
 
-export async function removeScambio(utente1: string, utente2: string, luogo: locationInterface, data: dataInterface) {
-    return await scambioModel.deleteOne({
-        utente1: utente1, utente2: utente2, 
-        longitudine: luogo.long, latitudine: luogo.lat, 
-        data: data.data, ora: data.ora, minuti: data.minuti, 
-        scambioAccettato: false});
+export async function removeScambio(id: string) {
+    return scambioModel.deleteOne({_id: id})
 }
 
-export async function accettaScambio(scambioID: string) {
-    let scambio = await scambioModel.findOne({_id: scambioID} 
+export async function accettaScambio(id: string) {
+    let scambio = await scambioModel.findOne({_id: id} 
     ).exec()
 
     if (!Object.keys(scambio).length) {
@@ -33,6 +27,5 @@ export async function accettaScambio(scambioID: string) {
         return false
     }
     scambio.scambioAccettato = true
-    await scambio.save()
-    return true
+    return scambio.save() 
 }

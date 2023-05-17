@@ -18,7 +18,7 @@ export default function runServer() {
     app.use(express.urlencoded({ extended: true }))
 
     app.use("/auth", authRouter)
-    app.use(tokenChecker)
+    //app.use(tokenChecker)
     app.use("/libro", libriRouter)
 
     app.use("/scambi", scambioRouter);
