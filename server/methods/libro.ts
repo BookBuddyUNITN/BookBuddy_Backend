@@ -1,16 +1,9 @@
-import { locationInterface } from "../../database/Schemas/Location"
 import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../../database/manager/managerLibri"
 
 interface addLibroInterface {
     titolo: NonNullable<string>,
     autore: NonNullable<string>,
     ISBN: NonNullable<string>
-}
-
-interface addCopiaLibroInterface {
-    ISBN: NonNullable<string>,
-    locazione: NonNullable<locationInterface>,
-    proprietario: NonNullable<string>
 }
 
 export async function GetLibriReq(req, res) {
@@ -48,7 +41,7 @@ export async function addLibroReq(req, res){
     }
 }
 
-export async function deleteBook(req, res) {
+export async function deleteBookReq(req, res) {
     try {
         const result = req.body as { ISBN: NonNullable<string> }
         if (!Object.keys(result).length) throw new Error("ISBN is required")

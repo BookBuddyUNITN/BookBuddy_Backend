@@ -1,8 +1,7 @@
-import Libro, { LibroInterface, recensione, CopialibroInterface } from "../Schemas/Libro";
-import { locationInterface } from "../Schemas/Location";
+import { Libro, CopiaLibro, LibroInterface, recensione, CopialibroInterface } from "../Schemas/Libro";
 
 export async function addLibro(titolo: string, autore: string, ISBN: string) {
-    const libro = new Libro({ titolo: titolo, autore: autore, ISBN: ISBN, recensioni: [], copieLibro: [] });
+    const libro = new Libro({ titolo: titolo, autore: autore, ISBN: ISBN, recensioni: [] });
     return await libro.save();
 }
 
@@ -13,22 +12,19 @@ export async function addRecensione(ISBN: string, testo: string, voto: number) {
     return true;
 }
 
-export async function addCopiaLibro(ISBN: string, locazione: locationInterface, proprietario: string) {
-    let libroDocument = await Libro.findOne({ ISBN: ISBN }).exec();
-    if(!libroDocument) return false;
-    if(!Object.keys(libroDocument).length) return false;
-
-    let copia = ({ISBN: ISBN, id: "not used", locazione: locazione, proprietario: proprietario}) as CopialibroInterface;
-    libroDocument.copieLibro.push(copia);
-    await libroDocument.save();
-    return true;
+export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, locazione: { loc: number, lat: number}, proprietario: string) {
+    const libroDocument = await Libro.findOne({ ISBN: ISBN });
+    if(!libroDocument){
+        addLibro(titolo, autore, ISBN)
+    }
+    const copia = new CopiaLibro({ ISNB: ISBN, locazione: locazione, proprietario: proprietario });
+    return await copia.save();
 }
 
 export async function removeCopiaLibro(ISBN: string, proprietario: string) {
-    let status = await Libro.updateOne({ISBN: ISBN}, {
-        $pull: { copieLibro: {proprietario: proprietario}}
-    })
-    return status.acknowledged
+    await CopiaLibro.deleteOne({ ISBN: ISBN, proprietario: proprietario });
+    const copialibro = await CopiaLibro.findOne({ ISBN: ISBN, proprietario: proprietario });
+    if (!copialibro) await Libro.deleteOne({ ISBN: ISBN});
 }
 
 export async function getLibro(ISBN: string) {
@@ -38,8 +34,20 @@ export async function getLibro(ISBN: string) {
     })
 }
 
+export async function getCopieLibro(ISBN: string) {
+    return await CopiaLibro.find({ ISBN: ISBN });
+}
+
 export async function deleteLibro(ISBN: string) {
     return await Libro.deleteOne({ ISBN: ISBN });
+}
+
+export async function deleteCopiaLibro(_id: string) {
+    const copia = await CopiaLibro.findOne({ _id: _id }) as CopialibroInterface;
+    if(!copia) return false;
+    await CopiaLibro.deleteOne({ _id: _id });
+    const copie = await CopiaLibro.findOne({ ISBN: copia.ISBN });
+    if(!copie) await Libro.deleteOne({ ISBN: copia.ISBN });
 }
 
 export async function getLibri() {
