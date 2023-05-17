@@ -22,6 +22,10 @@ export async function addAccordoToUtente(accordoID: string, userID: string) {
 
 }
 
+export async function checkUtenteByID(id: string) {
+    return await UtenteModel.exists({ _id: id });
+}
+
 export async function removeAccordo(accordoID: string, userID: string) {
     if(!accordoID || !userID) {
         return false;

@@ -1,7 +1,7 @@
 import { addAccordo, deleteAccordo } from "../../database/manager/managerAccordi"
 
 export function creaAccordo(req, res) {
-    addAccordo(req.body.userID_1, req.body.userID_2, req.body.data, req.body.libro)
+    addAccordo(req.body.userID_1, req.body.userID_2, req.body.data, req.body.libro, req.body.libri_proposti)
         .then((accordo) => {
             res.status(200).json({
                 success: true,
@@ -12,7 +12,11 @@ export function creaAccordo(req, res) {
             })
         })
         .catch((err) => {
-            res.status(500).json(err)
+            res.status(500).json({
+                success: false,
+                message: err,
+                data: {}
+            })
         })
 }  
 
@@ -25,10 +29,10 @@ export function eliminaAccordo(req, res) {
                 data: {}
             })
         })
-        .catch(() => {
+        .catch((err) => {
             res.status(500).json({
                 success: false,
-                message: "Errore nell'eliminazione dell'accordo",
+                message: err,
                 data: {}
             })
         })
