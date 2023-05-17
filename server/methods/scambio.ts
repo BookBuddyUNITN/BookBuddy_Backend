@@ -1,6 +1,7 @@
 import {createScambio, removeScambio, accettaScambio} from '../../database/manager/managerScambi'
 import {locationInterface} from '../../database/Schemas/Location'
 import {dataInterface} from '../../database/Schemas/Data'
+import { scambioInterface } from '../../database/Schemas/Scambio'
 
 interface richiediScambioInterface {
     utente1: string,
@@ -9,7 +10,7 @@ interface richiediScambioInterface {
     data: dataInterface 
 }
 
-interface accettaScambioInterface {
+interface scambioIdInterface {
     id: string,
 }
 
@@ -33,13 +34,13 @@ export async function proponiScambio(req, res) {
 
 export async function annullaScambio(req, res) {
     try{
-        let body = req.body as richiediScambioInterface
-        if (! await removeScambio(body.utente1, body.utente2, body.location, body.data) ){
+        let body = req.body as scambioIdInterface
+        if (! await removeScambio(body.id) ){
             throw new Error("scambio non trovato")
         }
         res.status(200).send({
             success: true,
-            message: "scambio avvenuto con successo",
+            message: "scambio annullato con successo",
             data: {}
         })
     } catch (e) {
@@ -52,7 +53,7 @@ export async function annullaScambio(req, res) {
 
 export async function confermaScambio(req, res) {
      try {
-        let body = req.body as accettaScambioInterface
+        let body = req.body as scambioIdInterface
         if(! await accettaScambio(body.id)) 
             throw new Error("scambio non trovato")
         res.status(200).send({

@@ -1,9 +1,9 @@
-import { CopialibroInterface, copiaLibro } from "../../database/Schemas/Libro";
+import { CopialibroInterface } from "../../database/Schemas/Libro";
 import { addCopiaLibro, removeCopiaLibro } from "../../database/manager/managerLibri";
 
 export async function inserisciCopiaLibro(req, res) {
     try {
-        let body = req.body as CopialibroInterface
+        let body = req.body as CopialibroInterface // maybe change the interface to not have the id
         if(!Object.keys(body).length) {
             throw new Error("richiesta non formattata correttamente")
         }

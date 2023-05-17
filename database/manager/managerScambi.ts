@@ -16,12 +16,8 @@ export async function createScambio(utente1: string, utente2: string, luogo: loc
     return newId
 }
 
-export async function removeScambio(utente1: string, utente2: string, luogo: locationInterface, data: dataInterface) {
-    return await scambioModel.deleteOne({
-        utente1: utente1, utente2: utente2, 
-        longitudine: luogo.long, latitudine: luogo.lat, 
-        data: data.data, ora: data.ora, minuti: data.minuti, 
-        scambioAccettato: false});
+export async function removeScambio(id: string) {
+    return await scambioModel.deleteOne({_id: id});
 }
 
 export async function accettaScambio(scambioID: string) {
