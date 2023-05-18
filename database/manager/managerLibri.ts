@@ -13,7 +13,7 @@ export async function addRecensione(ISBN: string, testo: string, voto: number) {
 }
 
 export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, locazione: [number, number], proprietario: string) {
-    const libroDocument = await Libro.findOne({ ISBN: ISBN });
+    const libroDocument = await Libro.findOne({ ISBN: ISBN }) as LibroInterface;
     if (!libroDocument) {
         addLibro(titolo, autore, ISBN)
     }
@@ -51,10 +51,10 @@ export async function deleteCopiaLibro(_id: string) {
     const copia = await CopiaLibro.findOne({ _id: _id }) as CopialibroInterface;
     if (!copia) return false;
     await CopiaLibro.deleteOne({ _id: _id });
-    const copie = await CopiaLibro.findOne({ ISBN: copia.ISBN });
+    const copie = await CopiaLibro.findOne({ ISBN: copia.ISBN }) as CopialibroInterface;
     if (!copie) await Libro.deleteOne({ ISBN: copia.ISBN });
 }
 
 export async function getLibri() {
-    return await Libro.find();
+    return await Libro.find() as LibroInterface[];
 }

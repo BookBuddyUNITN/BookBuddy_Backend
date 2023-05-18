@@ -1,4 +1,4 @@
-import { Libro, CopiaLibro, LibroInterface, recensione, copiaLibro, libro } from "../Schemas/Libro";
+import { Libro, CopiaLibro, LibroInterface, CopialibroInterface } from "../Schemas/Libro";
 
 
 export async function search(options: { locazione: [number, number], searchString: string, distanzaMassima: number }) {
@@ -14,17 +14,14 @@ export async function search(options: { locazione: [number, number], searchStrin
         }
     };
 
-    const locals = await CopiaLibro.find(researchObject) as copiaLibro[];
+    const locals = await CopiaLibro.find(researchObject) as CopialibroInterface[];
 
     if (options.searchString === "")
         return locals;
 
-
     let books = await Promise.all(locals.map(async (local) => {
-        
-        const book = await Libro.findOne({ ISBN: local.ISBN }) as libro;
-        console.log(local.ISBN,book);
-        // case insensitive
+        const book = await Libro.findOne({ ISBN: local.ISBN }) as LibroInterface;
+        // case insensitive search
         if (book.titolo.toLowerCase().includes(options.searchString.toLowerCase()) || book.autore.toLowerCase().includes(options.searchString.toLowerCase()) || book.ISBN.toLowerCase().includes(options.searchString.toLowerCase())){
             return book;
         }
