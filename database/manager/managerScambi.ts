@@ -1,11 +1,12 @@
 import scambioModel from '../Schemas/Scambio'
 import { locationInterface } from '../Schemas/Location';
+import { getPayload } from './managerLogin';
 
-export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: dataInterface, scambioAccettato: boolean = false) {
+export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: Date, scambioAccettato: boolean = false) {
     const scambio = new scambioModel({
         utente1: utente1, utente2: utente2, 
         longitudine: luogo.long, latitudine: luogo.lat, 
-        data: data.data, ora: data.ora, minuti: data.minuti,
+        data: data,
         scambioAccettato: scambioAccettato}); 
     let newId = ""
     await scambio.save()
@@ -15,12 +16,16 @@ export async function createScambio(utente1: string, utente2: string, luogo: loc
     return newId
 }
 
-export async function removeScambio(id: string) {
-    return scambioModel.deleteOne({_id: id})
+export async function removeScambio(id: string, token: string) {
+    const decoded = getPayload(token)
+    console.log(decoded.username) 
+    return scambioModel.deleteOne({_id: id, utente1: decoded.username})
 }
 
-export async function accettaScambio(id: string) {
-    let scambio = await scambioModel.findOne({_id: id} 
+export async function accettaScambio(id: string, token: string) {
+    const decoded = getPayload(token)
+    console.log(decoded.username)
+    let scambio = await scambioModel.findOne({_id: id, utente2: decoded.username}
     ).exec()
 
     if (!Object.keys(scambio).length) {
