@@ -1,14 +1,14 @@
 import mongoose from 'mongoose'
 import Location  from '../classes/Location'
 import Data from '../classes/Data';
-import locationSchema, { locationInterface } from './Location';
+import locationSchema from './Location'
 
 export interface scambioInterface {
     utente1: string;
     utente2: string;
     libro1ID: string,
     libro2ID: string,
-    location: locationInterface;
+    luogo: Location;
     data: Data;
     scambioAccettato: boolean;
 }

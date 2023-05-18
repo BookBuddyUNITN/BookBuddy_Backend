@@ -1,16 +1,17 @@
-import scambioModel, { scambioInterface } from '../Schemas/Scambio'
+import scambioModel from '../Schemas/Scambio'
 import { locationInterface } from '../Schemas/Location';
-import mongoose from 'mongoose';
 
-export async function createScambio(utente1: string, utente2: string, location: locationInterface, data: Date, scambioAccettato: boolean = false) {
+export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: dataInterface, scambioAccettato: boolean = false) {
     const scambio = new scambioModel({
         utente1: utente1, utente2: utente2, 
-        location: {long: location.long, lat: location.lat}, 
-        data: data,
+        longitudine: luogo.long, latitudine: luogo.lat, 
+        data: data.data, ora: data.ora, minuti: data.minuti,
         scambioAccettato: scambioAccettato}); 
     let newId = ""
     await scambio.save()
-        .then(result => newId = result._id.toString())
+        .then(result => {
+            newId = result._id.toString()
+        })
     return newId
 }
 
@@ -27,5 +28,6 @@ export async function accettaScambio(id: string) {
         return false
     }
     scambio.scambioAccettato = true
-    return scambio.save() 
+    await scambio.save()
+    return true
 }

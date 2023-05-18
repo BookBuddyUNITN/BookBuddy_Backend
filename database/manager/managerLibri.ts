@@ -1,4 +1,5 @@
-import Libro, { LibroInterface, recensione, copiaLibro } from "../Schemas/Libro";
+import Libro, { LibroInterface, recensione, CopialibroInterface } from "../Schemas/Libro";
+import { locationInterface } from "../Schemas/Location";
 
 export async function addLibro(titolo: string, autore: string, ISBN: string) {
     const libro = new Libro({ titolo: titolo, autore: autore, ISBN: ISBN, recensioni: [], copieLibro: [] });
@@ -12,11 +13,22 @@ export async function addRecensione(ISBN: string, testo: string, voto: number) {
     return true;
 }
 
-export async function addCopiaLibro(ISBN: string, locazione: string, proprietario: string) {
-    return await Libro.findOne({ ISBN: ISBN }, (err : any, libro : LibroInterface) => {
-        if (err) return false;
-        libro.copieLibro.push(new copiaLibro(locazione, proprietario));
-    });
+export async function addCopiaLibro(ISBN: string, locazione: locationInterface, proprietario: string) {
+    let libroDocument = await Libro.findOne({ ISBN: ISBN }).exec();
+    if(!libroDocument) return false;
+    if(!Object.keys(libroDocument).length) return false;
+
+    let copia = ({ISBN: ISBN, id: "not used", locazione: locazione, proprietario: proprietario}) as CopialibroInterface;
+    libroDocument.copieLibro.push(copia);
+    await libroDocument.save();
+    return true;
+}
+
+export async function removeCopiaLibro(ISBN: string, proprietario: string) {
+    let status = await Libro.updateOne({ISBN: ISBN}, {
+        $pull: { copieLibro: {proprietario: proprietario}}
+    })
+    return status.acknowledged
 }
 
 export async function getLibro(ISBN: string) {

@@ -1,17 +1,27 @@
 import express from "express"
-import jwt from "jsonwebtoken"
 import authRouter from "./routes/authRoutes"
 import libriRouter from "./routes/libriRoutes"
+import cors from "cors"
 import tokenChecker from "./middleware/tokenChecker"
-import scambioRouter from "./routes/scambioRoutes"
+import scambioRoutes from "./routes/scambioRoutes"
+import libreriaPersonaleRouter from "./routes/libreriaPersonaleRoutes"
+import wishlistRoutes from "./routes/wishlistRouters"
 
 
 const app = express()
 
 
+
+//TODO: fixare l'error che deve dare in caso arrivi null dal req.body
+
+
+
 export default function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    app.use(cors())
+
+
     
     
     app.use(express.json())
@@ -20,8 +30,10 @@ export default function runServer() {
     app.use("/auth", authRouter)
     //app.use(tokenChecker)
     app.use("/libro", libriRouter)
+    app.use("/wishlist", wishlistRoutes)
 
-    app.use("/scambi", scambioRouter);
+    app.use("/scambi", scambioRoutes);
+    app.use("/libreriaPersonale", libreriaPersonaleRouter)
     
     
     app.listen(3456, () => {
