@@ -1,11 +1,15 @@
 import scambioModel from '../Schemas/Scambio'
-import { locationInterface } from '../Schemas/Location';
 import { dataInterface } from '../Schemas/Data';
+
+interface locationInterface {
+    lon: number,
+    lat: number
+}
 
 export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: dataInterface, scambioAccettato: boolean = false) {
     const scambio = new scambioModel({
         utente1: utente1, utente2: utente2, 
-        longitudine: luogo.long, latitudine: luogo.lat, 
+        longitudine: luogo.lon, latitudine: luogo.lat, 
         data: data.data, ora: data.ora, minuti: data.minuti,
         scambioAccettato: scambioAccettato}); 
     let newId = ""

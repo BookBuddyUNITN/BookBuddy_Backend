@@ -9,7 +9,7 @@ export interface LibroInterface {
 
 export interface CopialibroInterface {
   ISBN: string,
-  locazione: { loc: number; lat: number };
+  locazione: [number, number];
   proprietario: string;
 }
 
@@ -52,8 +52,18 @@ const recensioneSchema = new mongoose.Schema({
 });
 
 const copiaLibroSchema = new mongoose.Schema({
-  ISNB: { type: String, required: true },
-  locazione: { type: { loc: Number, lat: Number }, required: true },
+  ISBN: { type: String, required: true },
+  locazione: {
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ['Point'], // 'location.type' must be 'Point'
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  },
   proprietario: { type: String, required: true },
 });
 
@@ -63,6 +73,8 @@ const libroSchema = new mongoose.Schema({
   ISBN: { type: String, required: true },
   recensioni: [recensioneSchema],
 });
+
+copiaLibroSchema.index({ locazione: '2dsphere' });
 
 const Libro = mongoose.model('Libro', libroSchema);
 const CopiaLibro = mongoose.model('CopiaLibro', copiaLibroSchema);

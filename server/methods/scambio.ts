@@ -1,7 +1,11 @@
 import {createScambio, removeScambio, accettaScambio} from '../../database/manager/managerScambi'
-import {locationInterface} from '../../database/Schemas/Location'
 import {dataInterface} from '../../database/Schemas/Data'
 import { scambioInterface } from '../../database/Schemas/Scambio'
+
+interface locationInterface {
+    lon: number,
+    lat: number
+}
 
 interface richiediScambioInterface {
     utente1: string,
