@@ -17,6 +17,7 @@ class Utente {
     premium: boolean;
     impostazioni: Impostazioni;
     pagamento: InfoPagamento;
+    accordi: string[];
     
     constructor(nickname: string, credenziali: Credenziali) {
         this.nickname = nickname;
@@ -27,6 +28,14 @@ class Utente {
 
     setAuthID(authID: string) {
         this.authID = authID;
+    }
+
+    addAccordo(accordoID: string) {
+        this.accordi.push(accordoID);
+    }
+
+    removeAccordo(accordoID: string) {
+        this.accordi = this.accordi.filter(accordo => accordo != accordoID);
     }
 }
 
