@@ -1,3 +1,4 @@
+import { locationInterface } from "../../database/Schemas/Location"
 import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../../database/manager/managerLibri"
 
 interface addLibroInterface {
@@ -8,7 +9,7 @@ interface addLibroInterface {
 
 interface addCopiaLibroInterface {
     ISBN: NonNullable<string>,
-    locazione: NonNullable<string>,
+    locazione: NonNullable<locationInterface>,
     proprietario: NonNullable<string>
 }
 
@@ -28,6 +29,7 @@ export async function GetLibriReq(req, res) {
         })
     }
 }
+
 export async function getLibroReq(req, res) {
     try {
         const result = req.body as { ISBN: NonNullable<string> }
@@ -55,24 +57,6 @@ export async function addLibroReq(req, res) {
         res.send("result added")
     } catch (e) {
         res.status(400).send({
-            error: e.message
-        })
-    }
-}
-
-export async function addCopiaLibroReq(req, res) {
-    try {
-        const result = req.body as addCopiaLibroInterface
-        if (!Object.keys(result).length) throw new Error("ISBN is required")
-        addCopiaLibro(result.ISBN, result.locazione, result.proprietario)
-        res.send({
-            success: true,
-            message: "Copia aggiunta",
-            data: {}
-        })
-    } catch (e) {
-        res.status(400).send({
-            success: false,
             error: e.message
         })
     }
