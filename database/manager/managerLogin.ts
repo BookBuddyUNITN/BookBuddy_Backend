@@ -5,7 +5,7 @@ export async function checkUtente(username: string, hashedPassword: string) {
     if(!found) {
         return false;
     }
-    return true;
+    return found._id;
 }
 
 export async function addUtente(username: string, hashedPassword: string, email: string, token: string) {
@@ -15,7 +15,7 @@ export async function addUtente(username: string, hashedPassword: string, email:
 
 export async function emailConfermata(token: string) {
     const found = await UtenteModel.findOne({ tokenConferma: token });
-    if (!found) {
+    if (!found || found === null) {
         return false;
     }
     found.emailConfermata = true;
