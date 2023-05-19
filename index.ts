@@ -1,8 +1,6 @@
 import DB from "./database/db"
 import * as dotenv from 'dotenv'
 
-import { addRecensione,addLibro } from "./database/manager/managerLibri"
-
 import runServer from "./server/app"
 
 const envs = dotenv.config()
