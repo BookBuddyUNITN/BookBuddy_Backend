@@ -1,4 +1,4 @@
-import UtenteModel from "../Schemas/Utente";
+import UtenteModel from "../models/Utente";
 import jwt from "jsonwebtoken"
 
 export async function checkUtente(username: string, hashedPassword: string) { 

@@ -1,4 +1,4 @@
-import { CopialibroInterface } from "../../database/Schemas/Libro";
+import { CopialibroInterface } from "../../database/models/Libro";
 import { addCopiaLibro, removeCopiaLibro } from "../../database/manager/managerLibri";
 
 export async function inserisciCopiaLibro(req, res) {

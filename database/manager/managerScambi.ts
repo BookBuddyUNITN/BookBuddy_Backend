@@ -1,5 +1,5 @@
-import scambioModel from '../Schemas/Scambio'
-import { locationInterface } from '../Schemas/Location';
+import scambioModel from '../models/Scambio'
+import { locationInterface } from '../models/Location';
 import { getPayload } from './managerLogin';
 
 export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: Date, scambioAccettato: boolean = false) {

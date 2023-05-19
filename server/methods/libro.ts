@@ -1,4 +1,4 @@
-import { locationInterface } from "../../database/Schemas/Location"
+import { locationInterface } from "../../database/models/Location"
 import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../../database/manager/managerLibri"
 
 interface addLibroInterface {

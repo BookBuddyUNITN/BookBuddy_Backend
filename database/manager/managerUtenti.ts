@@ -1,4 +1,4 @@
-import UtenteModel from "../Schemas/Utente";
+import UtenteModel from "../models/Utente";
 
 export async function addUtente(nickname: string, credenziali: string) {
     const utente = new UtenteModel({ nickname: nickname, credenziali: credenziali });

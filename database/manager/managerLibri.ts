@@ -1,5 +1,5 @@
-import Libro, { LibroInterface, recensione, CopialibroInterface } from "../Schemas/Libro";
-import { locationInterface } from "../Schemas/Location";
+import Libro, { LibroInterface, recensione, CopialibroInterface } from "../models/Libro";
+import { locationInterface } from "../models/Location";
 
 export async function addLibro(titolo: string, autore: string, ISBN: string) {
     const libro = new Libro({ titolo: titolo, autore: autore, ISBN: ISBN, recensioni: [], copieLibro: [] });

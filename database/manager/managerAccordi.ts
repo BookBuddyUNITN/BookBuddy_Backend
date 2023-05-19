@@ -1,4 +1,4 @@
-import { AccordoModel } from "../Schemas/Accordo";
+import { AccordoModel } from "../models/Accordo";
 import { addAccordoToUtente, removeAccordo, checkUtenteByID } from "./managerUtenti";
 
 import jwt from "jsonwebtoken";

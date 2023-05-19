@@ -1,6 +1,6 @@
 import { getPayload } from '../../database/manager/managerLogin';
 import {createScambio, removeScambio, accettaScambio} from '../../database/manager/managerScambi'
-import {locationInterface} from '../../database/Schemas/Location'
+import {locationInterface} from '../../database/models/Location'
 
 
 interface richiediScambioInterface {

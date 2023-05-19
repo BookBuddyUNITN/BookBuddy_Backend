@@ -1,4 +1,4 @@
-import Wishlist from "../Schemas/Wishlist";
+import Wishlist from "../models/Wishlist";
 
 export async function addWishlist(idUtente: string, isbn: string) {
     const wishlist = new Wishlist({ idUtente: idUtente, isbn: isbn });
