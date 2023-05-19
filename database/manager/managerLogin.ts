@@ -1,4 +1,5 @@
 import UtenteModel from "../Schemas/Utente";
+import jwt from "jsonwebtoken"
 
 export async function checkUtente(username: string, hashedPassword: string) { 
     const found = await UtenteModel.findOne({ username, hashedPassword}); // as UtenteInterface;
@@ -21,4 +22,8 @@ export async function emailConfermata(token: string) {
     found.emailConfermata = true;
     found.tokenConferma = "";
     return found.save();
+}
+
+export function getPayload(token: string) {
+    return jwt.verify(token, process.env.SUPER_SECRET)
 }
