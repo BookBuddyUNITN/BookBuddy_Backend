@@ -4,6 +4,7 @@ export interface LibroInterface {
   titolo: string;
   autore: string;
   ISBN: string;
+  rating: number;
   recensioni: recensione[];
 }
 
@@ -41,12 +42,15 @@ const copiaLibroSchema = new mongoose.Schema({
     }
   },
   proprietario: { type: String, required: true },
-});
+},
+  { timestamps: true }
+);
 
 const libroSchema = new mongoose.Schema({
   titolo: { type: String, required: true },
   autore: { type: String, required: true },
   ISBN: { type: String, required: true },
+  rating: { type: Number, required: true },
   recensioni: [recensioneSchema],
 });
 

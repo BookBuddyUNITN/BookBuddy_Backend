@@ -9,6 +9,7 @@ interface Credenziali {
 }
 
 interface Token {
+    username: string;
     token: string;
 }
 
@@ -65,7 +66,7 @@ export async function confermaUtente (req, res) {
         const creds = req.body as Token;
         if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente");
 
-        if(emailConfermata(creds.token)){
+        if(emailConfermata(creds.username, creds.token)){
             res.status(200).send("utente attivato correttamente");
         } else {
             // TODO: da gestire se il token non è valido in casao di brute force attack

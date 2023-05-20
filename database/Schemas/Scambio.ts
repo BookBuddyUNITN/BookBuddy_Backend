@@ -23,8 +23,6 @@ export const scambioSchema = new mongoose.Schema({
     locazione: { type: { loc: Number, lat: Number }, required: true },
 
     data: Date,
-    ore: Number,
-    minuti: Number,
 
     scambioAccettato: Boolean,
 })

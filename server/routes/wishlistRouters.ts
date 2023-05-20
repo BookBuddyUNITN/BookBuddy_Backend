@@ -4,8 +4,8 @@ import { addWishlistReq, getUserWishlistReq, deleteFromWishlistReq, getAllWishli
 const wishlistRoutes = express.Router()
 
 wishlistRoutes.put("/add", addWishlistReq )
-wishlistRoutes.post("/list", getUserWishlistReq );
-wishlistRoutes.post("/listall", getAllWishlistReq );
+wishlistRoutes.get("/list", getUserWishlistReq );
+wishlistRoutes.get("/listall", getAllWishlistReq );
 wishlistRoutes.delete("/delete", deleteFromWishlistReq );
 
 export default wishlistRoutes

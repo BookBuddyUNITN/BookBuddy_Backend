@@ -13,8 +13,8 @@ export async function addUtente(username: string, hashedPassword: string, email:
     return utente.save();
 }
 
-export async function emailConfermata(token: string) {
-    const found = await UtenteModel.findOne({ tokenConferma: token });
+export async function emailConfermata(usename: string, token: string) {
+    const found = await UtenteModel.findOne({ username: usename, tokenConferma: token });
     if (!found) {
         return false;
     }
