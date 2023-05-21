@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-export default async function ricercaGlobale(keywords: string) {
+export async function ricercaGlobaleReq(req, res) {
+    let keywords = req.body.keywords;
     axios.get("http://openlibrary.org/search.json?q=" + keywords.replace(" ", "+"))
         .then(response => {
             const books = response.data.docs;
@@ -18,9 +19,20 @@ export default async function ricercaGlobale(keywords: string) {
                 }
             });
             console.log(books_info);
+            res.status(200).send({
+                success: true,
+                message: "Libri trovati",
+                data: {
+                    libri: books_info
+                }
+            });
         })
         .catch(error => {
             console.log(error);
+            res.status(400).send({
+                success: false,
+                error: error.message
+            });
         });
 }
 

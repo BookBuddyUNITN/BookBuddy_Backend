@@ -1,4 +1,4 @@
-import { Libro, CopiaLibro, LibroInterface, CopialibroInterface } from "../Schemas/Libro";
+import { Libro, CopiaLibro, LibroInterface, CopialibroInterface } from "../models/Libro";
 
 
 export async function search(options: { locazione: [number, number], searchString: string, distanzaMassima: number }) {
