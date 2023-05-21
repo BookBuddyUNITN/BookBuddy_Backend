@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export async function ricercaGlobaleReq(req, res) {
-    let keywords = req.body.keywords;
+    const keywords = req.body.searchString;
     axios.get("http://openlibrary.org/search.json?q=" + keywords.replace(" ", "+"))
         .then(response => {
             const books = response.data.docs;
@@ -35,4 +35,3 @@ export async function ricercaGlobaleReq(req, res) {
             });
         });
 }
-

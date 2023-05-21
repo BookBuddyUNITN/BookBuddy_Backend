@@ -31,7 +31,9 @@ export async function getUserWishlistReq(req, res) {
         res.status(200).send({
             success: true,
             message: "User's wishlist",
-            data: wishlist
+            data: {
+                wishlist: wishlist
+            }
         });
     } catch (e) {
         res.status(400).send({
@@ -46,7 +48,9 @@ export async function getAllWishlistReq(req, res) {
         res.status(200).send({
             success: true,
             message: "Wishlist di tutti gli utenti",
-            data: wishlist
+            data: {
+                wishlist: wishlist
+            }
         });
     }
     catch (e) {
@@ -64,7 +68,7 @@ export async function deleteFromWishlistReq(req, res) {
         res.status(200).send({
             success: true,
             message: "Elemento eliminato dalla wishlist",
-            data: { idUtente: result.idUtente, isbn: result.isbn }
+            data: {}
         });
     } catch (e) {
         res.status(400).send({

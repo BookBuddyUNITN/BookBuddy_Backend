@@ -14,7 +14,7 @@ export async function ricercaLocaleReq(req, res) {
         res.status(200).send({
             success: true,
             message: "Ricerca effettuata con successo",
-            data: ricerca
+            data: { result: ricerca }
         })
     }
     catch (err) {
@@ -24,4 +24,3 @@ export async function ricercaLocaleReq(req, res) {
         })
     }
 }
-
