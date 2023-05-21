@@ -25,16 +25,15 @@ export async function addWishlistReq(req, res) {
 
 export async function getUserWishlistReq(req, res) {
     try {
-        const result = req.body as { idUtente: NonNullable<string> };
-        if (!Object.keys(result).length) throw new Error("userID è richiesto");
-        const wishlist = await getWishlistByUserID(result.idUtente);
+        const idUtente = req.query.idUtente;
+        if (!idUtente) throw new Error("idUtente is required");
+        const wishlist = await getWishlistByUserID(idUtente);
         res.status(200).send({
             success: true,
-            message: "Wishlist dell'utente",
+            message: "User's wishlist",
             data: wishlist
         });
-    }
-    catch (e) {
+    } catch (e) {
         res.status(400).send({
             error: e.message
         });

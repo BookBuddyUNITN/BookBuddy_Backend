@@ -9,6 +9,7 @@ interface Credenziali {
 }
 
 interface Token {
+    username: string;
     token: string;
 }
 

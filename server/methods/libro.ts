@@ -1,4 +1,3 @@
-import { locationInterface } from "../../database/models/Location"
 import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../../database/manager/managerLibri"
 
 interface addLibroInterface {
@@ -8,8 +7,10 @@ interface addLibroInterface {
 }
 
 interface addCopiaLibroInterface {
+    titolo: NonNullable<string>,
+    autore: NonNullable<string>,
     ISBN: NonNullable<string>,
-    locazione: NonNullable<locationInterface>,
+    locazione: [NonNullable<number>, NonNullable<number>],
     proprietario: NonNullable<string>
 }
 
@@ -34,7 +35,7 @@ export async function getLibroReq(req, res) {
     try {
         const result = req.body as { ISBN: NonNullable<string> }
         if (!Object.keys(result).length) throw new Error("ISBN is required")
-        res.send({
+        res.status(200).send({
             success: true,
             message: "Libro trovato",
             data: {
@@ -62,12 +63,29 @@ export async function addLibroReq(req, res) {
     }
 }
 
-export async function deleteBook(req, res) {
+export async function addCopiaLibroReq(req, res) {
+    try {
+        const result = req.body as addCopiaLibroInterface
+        if (!Object.keys(result).length) throw new Error("Copia libro is required")
+        const saved = await addCopiaLibro(result.titolo, result.autore, result.ISBN, result.locazione, result.proprietario)
+        res.status(201).send({
+            success: true,
+            message: "Copia libro added",
+            data: saved
+        })
+    } catch (e) {
+        res.status(400).send({
+            error: e.message
+        })
+    }
+}
+
+export async function deleteBookReq(req, res) {
     try {
         const result = req.body as { ISBN: NonNullable<string> }
         if (!Object.keys(result).length) throw new Error("ISBN is required")
         deleteLibro(result.ISBN)
-        res.send({
+        res.status(200).send({
             success: true,
             message: "Libro eliminato",
             data: {}

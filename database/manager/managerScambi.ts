@@ -4,10 +4,11 @@ import { getPayload } from './managerLogin';
 
 export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: Date, scambioAccettato: boolean = false) {
     const scambio = new scambioModel({
-        utente1: utente1, utente2: utente2, 
-        longitudine: luogo.long, latitudine: luogo.lat, 
+        utente1: utente1, utente2: utente2,
+        longitudine: luogo.lon, latitudine: luogo.lat,
         data: data,
-        scambioAccettato: scambioAccettato}); 
+        scambioAccettato: scambioAccettato
+    });
     let newId = ""
     await scambio.save()
         .then(result => {
@@ -18,14 +19,14 @@ export async function createScambio(utente1: string, utente2: string, luogo: loc
 
 export async function removeScambio(id: string, token: string) {
     const decoded = getPayload(token)
-    console.log(decoded.username) 
-    return scambioModel.deleteOne({_id: id, utente1: decoded.username})
+    console.log(decoded.username)
+    return scambioModel.deleteOne({ _id: id, utente1: decoded.username })
 }
 
 export async function accettaScambio(id: string, token: string) {
     const decoded = getPayload(token)
     console.log(decoded.username)
-    let scambio = await scambioModel.findOne({_id: id, utente2: decoded.username}
+    let scambio = await scambioModel.findOne({ _id: id, utente2: decoded.username }
     ).exec()
 
     if (!Object.keys(scambio).length) {
