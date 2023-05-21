@@ -4,7 +4,6 @@ import {locationInterface} from '../../database/models/Location'
 
 
 interface richiediScambioInterface {
-    utente1: string,
     utente2: string,
     location: locationInterface,
     data: Date 

@@ -30,9 +30,9 @@ export async function accettaScambio(id: string, token: string) {
 
     if (!Object.keys(scambio).length) {
         console.log("scambio not found")
-        return false
+        return null
     }
     scambio.scambioAccettato = true
     await scambio.save()
-    return true
+    return scambio
 }

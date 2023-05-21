@@ -5,6 +5,6 @@ const scambioRouter = express.Router()
 
 scambioRouter.post("/gestione", proponiScambio)
 scambioRouter.delete("/gestione", annullaScambio)
-scambioRouter.post("/accetta", confermaScambio)
+scambioRouter.put("/gestione", confermaScambio)
 
 export default scambioRouter
