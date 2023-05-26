@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
 
+export const listaGeneri = ['Fantasy', 'Avventura', 'Giallo', 'Horror', 'Storico', 'Romanzo', 'Biografia', 'Saggistica', 'Altro'];
+
 export interface LibroInterface {
   titolo: string;
   autore: string;
   ISBN: string;
+  generi: string[];
   rating: number;
   recensioni: recensione[];
 }
@@ -20,6 +23,23 @@ export class recensione {
   constructor(testo: string, voto: number) {
     this.testo = testo;
     this.voto = voto;
+  }
+}
+
+export class libro {
+  titolo: string;
+  autore: string;
+  ISBN: string;
+  generi: string[];
+  rating: number;
+  recensioni: recensione[];
+  constructor(titolo: string, autore: string, ISBN: string, generi: string[], rating: number, recensioni: recensione[]) {
+    this.titolo = titolo;
+    this.autore = autore;
+    this.ISBN = ISBN;
+    this.generi = generi;
+    this.rating = rating;
+    this.recensioni = recensioni;
   }
 }
 
@@ -50,6 +70,7 @@ const libroSchema = new mongoose.Schema({
   titolo: { type: String, required: true },
   autore: { type: String, required: true },
   ISBN: { type: String, required: true },
+  generi: { type: [String], required: true },
   rating: { type: Number, required: true },
   recensioni: [recensioneSchema],
 });

@@ -16,7 +16,7 @@ export async function inserisciCopiaLibro(req, res) {
             throw new Error("richiesta non formattata correttamente")
         }
         
-        let status = await addCopiaLibro(body.titolo, body.autore, body.ISBN, body.locazione, body.proprietario)
+        let status = await addCopiaLibro(body.titolo, body.autore, body.ISBN, [], body.locazione, body.proprietario)
         if(!status) throw new Error("errore nel db")
         res.status(200).send({
             success: true,
