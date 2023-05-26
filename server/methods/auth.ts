@@ -69,7 +69,6 @@ export async function registrazione(req, res) {
 
 export async function confermaUtente(req, res) {
     const params = req.query as Token;
-    console.log(params)
     if (!Object.keys(params).length) throw new Error("oops! credenziali non formattate correttamente");
 
     emailConfermata(params.token).then((result) => {
@@ -88,5 +87,25 @@ export async function confermaUtente(req, res) {
             success: false,
             error: err.message
         });
+    });
+}
+
+export async function verificaToken(req, res) {
+    const params = req.query as Token;
+    if (!Object.keys(params).length) throw new Error("oops! credenziali non formattate correttamente");
+
+    jwt.verify(params.token, process.env.SUPER_SECRET, function (err, decoded) {
+        if (err) {
+            res.status(400).send({
+                success: false,
+                error: err.message
+            });
+        } else {
+            res.status(200).send({
+                success: true,
+                message:"token valido",
+                data: {}
+            });
+        }
     });
 }
