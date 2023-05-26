@@ -9,11 +9,7 @@ import libreriaPersonaleRouter from "./routes/libreriaPersonaleRoutes"
 import wishlistRoutes from "./routes/wishlistRouters"
 import ricercaRouter from "./routes/ricercaRoutes"
 
-import sendMail from "./middleware/sendEmail"
-
 const app = express()
-
-sendMail("putellistefano@gmail.com", "Stefano", "Ciao", "Stefano")
 
 export default function runServer() {
     app.use(express.json())

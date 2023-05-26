@@ -1,5 +1,5 @@
 import { checkUtente, addUtente, emailConfermata } from "../../database/manager/managerLogin"
-import { sendMail } from "../../database/manager/managerMail"
+import sendMail from "../../database/manager/managerMail"
 import jwt from "jsonwebtoken"
 
 interface Credenziali {
@@ -52,7 +52,7 @@ export async function registrazione(req, res) {
         // const token = generateToken(creds.username, creds.password, 300);
         const token = "000000"
         addUtente(creds.username, creds.password, creds.email, token);
-        sendMail(creds.email, token);
+        sendMail(creds.email, creds.username, "conferma la tua email con questo token " + token, "BookBuddyVerify");
 
         res.status(201).send(
             {
