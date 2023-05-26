@@ -9,9 +9,9 @@ const db = new DB(envs.parsed.MONGO_LINK, envs.parsed.MONGO_PASS)
 
 //PER AVVIARE USARE -> npm run start:nodemon
 
-db.connect().then(async () => {
+Promise.all([db.connect()]).then(async () => {
     runServer();
 }).catch((err) => {
-    console.log("Error connecting to MongoDB: " + err)
+    console.log("Error: " + err)
     return
 })
