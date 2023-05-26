@@ -1,7 +1,7 @@
-import { Libro, CopiaLibro, LibroInterface, recensione, CopialibroInterface, libro, listaGeneri } from "../models/Libro";
+import { Libro, CopiaLibro, recensione, libro, listaGeneri } from "../models/Libro";
 
 export async function addLibro(titolo: string, autore: string, ISBN: string, generi: string[] = []) {
-    let findGenere = [];
+    const findGenere = [];
     if (generi.length > 0) {
         generi.forEach(genere => {
             if (listaGeneri.includes(genere)) {
@@ -30,13 +30,13 @@ export async function addRecensione(ISBN: string, testo: string, voto: number) {
     return true;
 }
 
-export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, generi: string[], locazione: [number, number], proprietario: string) {
+export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, generi: string[] = [], locazione: [number, number], proprietario: string) {
     const libroDocument = await Libro.findOne({ ISBN: ISBN });
     if (!libroDocument) {
         addLibro(titolo, autore, ISBN, generi)
     }
     const copia = new CopiaLibro({
-        ISNB: ISBN, locazione: {
+        ISBN: ISBN, locazione: {
             type: 'Point',
             coordinates: [locazione[0], locazione[1]] // long, lat
         }, proprietario: proprietario
@@ -51,10 +51,7 @@ export async function removeCopiaLibro(ISBN: string, proprietario: string) {
 }
 
 export async function getLibro(ISBN: string) {
-    return Libro.findOne({ ISBN: ISBN }, (err: any, libro: libro) => {
-        if (err) return false;
-        return libro;
-    })
+    return await Libro.findOne({ ISBN: ISBN });
 }
 
 export async function getCopieLibro(ISBN: string) {
