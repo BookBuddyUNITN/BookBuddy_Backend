@@ -49,8 +49,7 @@ export async function registrazione(req, res) {
         if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente");
         if (!creds.email) throw new Error("email is required");
 
-        // const token = generateToken(creds.username, creds.password, 300);
-        const token = "000000"
+        const token = generateToken(creds.username, creds.password, 300);
         addUtente(creds.username, creds.password, creds.email, token);
         sendMail(creds.email, creds.username, "conferma la tua email con questo token " + token, "BookBuddyVerify");
 
