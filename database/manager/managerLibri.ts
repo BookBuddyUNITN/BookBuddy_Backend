@@ -1,13 +1,25 @@
-import { Libro, CopiaLibro, LibroInterface, recensione, CopialibroInterface } from "../models/Libro";
+import { Libro, CopiaLibro, LibroInterface, recensione, CopialibroInterface, libro, listaGeneri } from "../models/Libro";
 
-export async function addLibro(titolo: string, autore: string, ISBN: string) {
-    const libro = new Libro({ titolo: titolo, autore: autore, ISBN: ISBN, rating: 0, recensioni: [] });
+export async function addLibro(titolo: string, autore: string, ISBN: string, generi: string[] = []) {
+    let findGenere = [];
+    if (generi.length > 0) {
+        generi.forEach(genere => {
+            if (listaGeneri.includes(genere)) {
+                findGenere.push(genere);
+            } else {
+                findGenere.push("Altro");
+            }
+        });
+    }
+    const libro = new Libro({ titolo: titolo, autore: autore, ISBN: ISBN, generi: findGenere, rating: 0, recensioni: [] });
     return await libro.save();
 }
 
 export async function addRecensione(ISBN: string, testo: string, voto: number) {
     const libro = await Libro.findOne({ ISBN: ISBN });
     if (!libro) return false;
+    if (voto < 0) voto = 0;
+    if (voto > 5) voto = 5;
     libro.recensioni.push(new recensione(testo, voto));
     let rating = 0;
     libro.recensioni.forEach(recensione => {
@@ -18,10 +30,10 @@ export async function addRecensione(ISBN: string, testo: string, voto: number) {
     return true;
 }
 
-export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, locazione: [number, number], proprietario: string) {
+export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, generi: string[], locazione: [number, number], proprietario: string) {
     const libroDocument = await Libro.findOne({ ISBN: ISBN });
     if (!libroDocument) {
-        addLibro(titolo, autore, ISBN)
+        addLibro(titolo, autore, ISBN, generi)
     }
     const copia = new CopiaLibro({
         ISNB: ISBN, locazione: {
@@ -39,7 +51,7 @@ export async function removeCopiaLibro(ISBN: string, proprietario: string) {
 }
 
 export async function getLibro(ISBN: string) {
-    Libro.findOne({ ISBN: ISBN }, (err: any, libro: LibroInterface) => {
+    return Libro.findOne({ ISBN: ISBN }, (err: any, libro: libro) => {
         if (err) return false;
         return libro;
     })
