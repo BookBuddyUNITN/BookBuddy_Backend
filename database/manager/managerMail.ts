@@ -8,12 +8,12 @@ emailjs.init({
     privateKey: envs.parsed.EMAILJS_PRIVATE, // optional, highly recommended for security reasons
 });
 
-export default function sendMail( to: string, to_name: string, message: string, from_name: string ) {
+export default function sendMail( to: string, to_name: string, token: string, from_name: string ) {
     emailjs.send('verify_account', 'template_k68v69f',
         {
             to: to,
             to_name: to_name,
-            message: message,
+            token: token,
             from_name: from_name,
         }
     ).then(

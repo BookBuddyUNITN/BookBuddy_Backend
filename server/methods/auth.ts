@@ -9,7 +9,6 @@ interface Credenziali {
 }
 
 interface Token {
-    username: string;
     token: string;
 }
 
@@ -49,9 +48,9 @@ export async function registrazione(req, res) {
         if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente");
         if (!creds.email) throw new Error("email is required");
 
-        const token = generateToken(creds.username, creds.password, 300);
+        const token = generateToken(creds.username, creds.password, Date.now());
         addUtente(creds.username, creds.password, creds.email, token);
-        sendMail(creds.email, creds.username, "conferma la tua email con questo token " + token, "BookBuddyVerify");
+        sendMail(creds.email, creds.username, token, "BookBuddyVerify");
 
         res.status(201).send(
             {
@@ -69,10 +68,11 @@ export async function registrazione(req, res) {
 }
 
 export async function confermaUtente(req, res) {
-    const creds = req.body as Token;
-    if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente");
+    const params = req.query as Token;
+    console.log(params)
+    if (!Object.keys(params).length) throw new Error("oops! credenziali non formattate correttamente");
 
-    emailConfermata(creds.token).then((result) => {
+    emailConfermata(params.token).then((result) => {
         if (result) {
             res.status(200).send({
                 success: true,

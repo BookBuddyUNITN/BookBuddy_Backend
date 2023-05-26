@@ -5,7 +5,7 @@ const authRouter = express.Router()
 
 authRouter.post("/login", login )
 authRouter.post("/registrazione", registrazione );
-authRouter.post("/validate", confermaUtente );
+authRouter.get("/validate*", confermaUtente );
 
 export default authRouter
 
