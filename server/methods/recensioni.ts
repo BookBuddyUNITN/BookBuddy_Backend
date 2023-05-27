@@ -23,6 +23,14 @@ interface rimuoviRecensioneUtenteInterface {
     recensioneID: String
 }
 
+interface ISBNinterface {
+    ISBN: string
+}
+
+interface usernameinterface {
+    username: string
+}
+
 export async function lasciaRecensioneLibro(req, res) {
     try {
         let body = req.body as lasciaRecensioneLibroInterface;
@@ -82,6 +90,29 @@ export async function eliminaRecensioneLibro(req, res) {
     }
 }
 
+export async function getRecensioniLibro(req, res) {
+    try {
+        let body = req.body as ISBNinterface;
+        if(!Object.keys(body).length) throw new Error("bad request");
+        let book = await Libro.findOne({ISBN: body});
+        if(!book) throw new Error("book not found");
+        let recensioni = book.recensioni;
+        // ordina le recensioni per rating
+
+        res.status(200).send({
+            success: true,
+            message: "",
+            data: recensioni
+        })
+
+    } catch(e) {
+        res.status(400).send({
+            success: false,
+            error: e.message
+        })
+    }
+}
+
 export async function lasciaRecensioneUtente(req, res) {
     try {
         let body = req.body as lasciaRecensioneUtenteInterface
@@ -120,7 +151,7 @@ export async function rimuoviRecensioneUtente(req, res) {
         if(!utente) throw new Error("utente not found")
         utente.recensioni.pull({recensioneID: body.recensioneID});
 
-        await utente.save().catch(e => {throw new Error("error in removing recensione")})
+        await utente.save().catch(e => {throw new Error(e.message)})
 
         res.status(400).send({
             success: true,
@@ -131,6 +162,28 @@ export async function rimuoviRecensioneUtente(req, res) {
     } catch(e) {
         res.status(400).send({
             success: false, 
+            error: e.message
+        })
+    }
+}
+
+export async function getRecensioniUtente(req, res) {
+    try {
+        let body = req.body as usernameinterface;
+        console.log(req.body)
+        if(!Object.keys(body).length) throw new Error("bad request");
+        let user = await UtenteModel.findOne({username: body}).exec();
+        let recensioni = user.recensioni
+
+        res.status(200).send({
+            success: true,
+            message: "",
+            data: recensioni
+        })
+
+    } catch(e) {
+        res.status(400).send({
+            success: false,
             error: e.message
         })
     }

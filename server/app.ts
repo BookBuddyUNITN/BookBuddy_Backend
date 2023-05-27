@@ -20,7 +20,7 @@ export default function runServer() {
 
     
     app.use("/auth", authRouter)
-    //app.use(tokenChecker)
+    app.use(tokenChecker);
     app.use("/libro", libriRouter)
     app.use("/wishlist", wishlistRoutes)
     app.use("/accordo", accordoRouter)
