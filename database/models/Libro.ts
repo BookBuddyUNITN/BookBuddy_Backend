@@ -20,9 +20,11 @@ export interface CopialibroInterface {
 export class recensione {
   testo: string;
   voto: number;
-  constructor(testo: string, voto: number) {
+  id: string
+  constructor(testo: string, voto: number, id: string) {
     this.testo = testo;
     this.voto = voto;
+    this.id = id;
   }
 }
 
@@ -31,14 +33,12 @@ export class libro {
   autore: string;
   ISBN: string;
   generi: string[];
-  rating: number;
   recensioni: recensione[];
-  constructor(titolo: string, autore: string, ISBN: string, generi: string[], rating: number, recensioni: recensione[]) {
+  constructor(titolo: string, autore: string, ISBN: string, generi: string[], recensioni: recensione[]) {
     this.titolo = titolo;
     this.autore = autore;
     this.ISBN = ISBN;
     this.generi = generi;
-    this.rating = rating;
     this.recensioni = recensioni;
   }
 }
@@ -46,7 +46,14 @@ export class libro {
 const recensioneSchema = new mongoose.Schema({
   testo: { type: String, required: true },
   voto: { type: Number, required: true },
+  recensioneID: {type: String, required: true}
 });
+
+export interface recensioneLibroInterface {
+  testo: String,
+  voto: Number,
+  recensioneID: String
+}
 
 const copiaLibroSchema = new mongoose.Schema({
   ISBN: { type: String, required: true },
@@ -71,7 +78,6 @@ const libroSchema = new mongoose.Schema({
   autore: { type: String, required: true },
   ISBN: { type: String, required: true },
   generi: { type: [String], required: true },
-  rating: { type: Number, required: true },
   recensioni: [recensioneSchema],
 });
 

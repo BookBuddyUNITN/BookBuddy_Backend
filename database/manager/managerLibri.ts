@@ -15,21 +15,6 @@ export async function addLibro(titolo: string, autore: string, ISBN: string, gen
     return await libro.save();
 }
 
-export async function addRecensione(ISBN: string, testo: string, voto: number) {
-    const libro = await Libro.findOne({ ISBN: ISBN });
-    if (!libro) return false;
-    if (voto < 0) voto = 0;
-    if (voto > 5) voto = 5;
-    libro.recensioni.push(new recensione(testo, voto));
-    let rating = 0;
-    libro.recensioni.forEach(recensione => {
-        rating += recensione.voto;
-    });
-    libro.rating = rating / libro.recensioni.length;
-    await libro.save();
-    return true;
-}
-
 export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, generi: string[] = [], locazione: [number, number], proprietario: string) {
     const libroDocument = await Libro.findOne({ ISBN: ISBN });
     if (!libroDocument) {

@@ -8,6 +8,7 @@ import scambioRouter from "./routes/scambioRoutes"
 import libreriaPersonaleRouter from "./routes/libreriaPersonaleRoutes"
 import wishlistRoutes from "./routes/wishlistRouters"
 import ricercaRouter from "./routes/ricercaRoutes"
+import { recensioneRouter } from "./routes/recensioniRoutes"
 
 const app = express()
 
@@ -19,14 +20,15 @@ export default function runServer() {
 
     
     app.use("/auth", authRouter)
-    app.use(tokenChecker)
+    //app.use(tokenChecker)
     app.use("/libro", libriRouter)
     app.use("/wishlist", wishlistRoutes)
     app.use("/accordo", accordoRouter)
 
     app.use("/scambi", scambioRouter);
     app.use("/libreriaPersonale", libreriaPersonaleRouter)
-    app.use("/ricerca", ricercaRouter)
+    app.use("/ricerca", ricercaRouter);
+    app.use("/recensioni", recensioneRouter);
     
     
     app.listen(3456, () => {

@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+
+const recensioneUtenteSchema = new mongoose.Schema({
+  voto: {type: Number, required: true},
+  recensioneID: {type: String, required: true}
+})
 
 const UtenteSchema = new mongoose.Schema({
   username: { type: String, required: true },
@@ -9,6 +13,7 @@ const UtenteSchema = new mongoose.Schema({
   emailConfermata: { type: Boolean, required: true, default: false },
   createdAt: { type: Date, required: true, default: Date.now },
   accordi: [{ type: [String], required: false, default: [] }],
+  recensioni: [recensioneUtenteSchema]
 });
 
 const UtenteModel = mongoose.model('UtenteModel', UtenteSchema);
