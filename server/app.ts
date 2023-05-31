@@ -31,7 +31,7 @@ export default function runServer() {
     app.use("/recensioni", recensioneRouter);
     
     
-    app.listen(3456, () => {
-        console.log("Server running on port 3456")
+    app.listen(process.env.PORT, () => {
+        console.log("Server running on port " + process.env.PORT + "...")
     })
 }

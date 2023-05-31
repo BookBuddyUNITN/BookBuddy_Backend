@@ -22,6 +22,7 @@ function generateToken(username: string, password: string, time = 86400) {
 
 
 export async function login(req, res) {
+    console.log(req.body)
     const checkUtenteResult = await checkUtente(req.body.username, req.body.password);
     if (!checkUtenteResult) {
         res.status(401).send({

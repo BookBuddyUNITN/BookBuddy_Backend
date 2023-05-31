@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node ./index.ts",
-    "start:nodemon": "./node_modules/nodemon/bin/nodemon.js",
+    "start": "PORT=5000 ts-node ./index.ts",
+    "start:nodemon": "PORT=5000 ./node_modules/nodemon/bin/nodemon.js",
     "lint": "eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
