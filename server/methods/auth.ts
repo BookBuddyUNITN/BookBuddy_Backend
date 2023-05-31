@@ -15,8 +15,8 @@ interface Token {
     token: string;
 }
 
-function generateToken(username: string, password: string, time = 86400) {
-    var payload = { username: username, password: password }
+function generateToken(username: string, hashedPassword: string, time = 86400) {
+    var payload = { username: username, password: hashedPassword }
     var options = { expiresIn: time } // expires in 24 hours if not specified
     var token = jwt.sign(payload, process.env.SUPER_SECRET, options);
 
@@ -41,7 +41,7 @@ export async function login(req, res) {
     res.json({
         success: true,
         message: 'Enjoy your token!',
-        data: {}
+        data: {token: token}
     });
 }
 
@@ -130,7 +130,6 @@ export async function mandaTokenCambioPw(req, res) {
 
         // generate token and remember {user, token} pair
         let token = crypto.randomBytes(8).toString('hex');
-        console.log("not hanging there")
         let doc = new userTokens({
             username: body.username,
             token: token
