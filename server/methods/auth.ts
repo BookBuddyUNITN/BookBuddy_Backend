@@ -26,9 +26,11 @@ function generateToken(username: string, hashedPassword: string, time = 86400) {
 
 export async function login(req, res) {
     // cerca utente con username - hashedPw corrispondenti
+    console.log(req.body.username, req.body.password)
     let hashedPw = crypto.createHash('md5').update(req.body.password).digest('hex').toString();
     const checkUtenteResult = await checkUtente(req.body.username, hashedPw);
     if (!checkUtenteResult) {
+        console.log("utente non trovato")
         res.status(401).send({
             success: false,
             error: "username o password errati"
