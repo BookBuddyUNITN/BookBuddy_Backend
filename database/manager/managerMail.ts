@@ -1,6 +1,11 @@
 import emailjs from '@emailjs/nodejs';
 import * as dotenv from 'dotenv'
 
+function emailValida(email: string) : boolean {
+        var regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+        return regexp.test(email);
+    }
+
 const envs = dotenv.config()
 
 emailjs.init({
@@ -25,4 +30,5 @@ export default function sendMail( to: string, to_name: string, token: string, fr
         },
     );
 }
+
 
