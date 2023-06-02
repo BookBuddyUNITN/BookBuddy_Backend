@@ -1,4 +1,34 @@
 import { Libro, CopiaLibro, recensione, libro, listaGeneri } from "../models/Libro";
+import axios from "axios";
+
+export interface addlibroInterface {
+    titolo: string,
+    autore: string,
+    ISBN: string,
+    generi: string[],
+}
+
+async function translateISBN(isbn: string) {
+    try {
+        const response = await axios.get("https://openlibrary.org/api/books?bibkeys=ISBN:" + isbn + "&jscmd=data&format=json");
+        const data = response.data;
+        if (data["ISBN:" + isbn]) {
+            return {
+                titolo: data["ISBN:" + isbn].title as string,
+                autore: data["ISBN:" + isbn].authors[0].name as string,
+                ISBN: isbn as string,
+                generi: data["ISBN:" + isbn].subjects.map((subject: any) => subject.name)
+            }
+        }
+    } catch (e) {
+        return false;
+    }
+}
+
+export async function addLibroByISBN(isbn: string) {
+    const libro = await translateISBN(isbn) as addlibroInterface;
+    return await addLibro(libro.titolo, libro.autore, libro.ISBN, libro.generi);
+}
 
 export async function addLibro(titolo: string, autore: string, ISBN: string, generi: string[] = []) {
     const findGenere = [];
@@ -37,6 +67,10 @@ export async function removeCopiaLibro(ISBN: string, proprietario: string) {
 
 export async function getLibro(ISBN: string) {
     return await Libro.findOne({ ISBN: ISBN });
+}
+
+export async function getLibriByISBNs(ISBN: string[]) {
+    return await Libro.find({ ISBN: { $in: ISBN } });
 }
 
 export async function getCopieLibro(ISBN: string) {

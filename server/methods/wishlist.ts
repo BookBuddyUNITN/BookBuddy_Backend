@@ -1,38 +1,43 @@
 import { addWishlist, getWishlistByUserID, deleteFromWishlist, getAllWishlist } from "../../database/manager/managerWishlist";
+import { addLibroByISBN, getLibriByISBNs } from "../../database/manager/managerLibri";
+import { getPayload } from "../../database/manager/managerLogin";
 
 interface wishlistElement {
-    idUtente: NonNullable<string>,
     isbn: NonNullable<string>,
 }
 
 export async function addWishlistReq(req, res) {
-    try {
-        const result = req.body as wishlistElement;
-        if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
-        await addWishlist(result.idUtente, result.isbn);
+    console.log("body", req.body);
+    const result = req.body as wishlistElement;
+    const decoded = getPayload(req.header('x-access-token'));
+    if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
+    Promise.all([addLibroByISBN(result.isbn), addWishlist(decoded.id, result.isbn)]).then(( results : any[] ) => {
         res.status(201).send({
             success: true,
             message: "Elemento aggiunto alla wishlist",
-            data: { idUtente: result.idUtente, isbn: result.isbn }
+            data: { idUtente: decoded.id, isbn: result.isbn, libro: results[0] }
         });
-    }
-    catch (e) {
+    }).catch((e) => {
+        console.log(e);
         res.status(400).send({
             error: e.message
         });
-    }
+    });
 }
 
 export async function getUserWishlistReq(req, res) {
     try {
-        const idUtente = req.query.idUtente;
-        if (!idUtente) throw new Error("idUtente is required");
-        const wishlist = await getWishlistByUserID(idUtente);
+        const decoded = getPayload(req.header('x-access-token'));
+        if (!decoded.id) throw new Error("idUtente is required");
+        const wishlist = await getWishlistByUserID(decoded.id);
+        console.log("wishlist", wishlist);
+        const libri = await getLibriByISBNs(wishlist.map((element) => element.isbn));
+        console.log("libri", libri);
         res.status(200).send({
             success: true,
             message: "User's wishlist",
             data: {
-                wishlist: wishlist
+                wishlist: libri
             }
         });
     } catch (e) {
@@ -63,8 +68,9 @@ export async function getAllWishlistReq(req, res) {
 export async function deleteFromWishlistReq(req, res) {
     try {
         const result = req.body as wishlistElement;
+        const decoded = getPayload(req.header('x-access-token'));
         if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
-        await deleteFromWishlist(result.idUtente, result.isbn);
+        await deleteFromWishlist(decoded.id, result.isbn);
         res.status(200).send({
             success: true,
             message: "Elemento eliminato dalla wishlist",
