@@ -12,6 +12,7 @@ async function translateISBN(isbn: string) {
     try {
         const response = await axios.get("https://openlibrary.org/api/books?bibkeys=ISBN:" + isbn + "&jscmd=data&format=json");
         const data = response.data;
+        console.log("Data: " + JSON.stringify(data));
         if (data["ISBN:" + isbn]) {
             return {
                 titolo: data["ISBN:" + isbn].title as string,

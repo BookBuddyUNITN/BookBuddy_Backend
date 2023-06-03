@@ -19,13 +19,11 @@ export async function createScambio(utente1: string, utente2: string, luogo: loc
 
 export async function removeScambio(id: string, token: string) {
     const decoded = getPayload(token)
-    console.log(decoded.username)
     return scambioModel.deleteOne({ _id: id, utente1: decoded.username })
 }
 
 export async function accettaScambio(id: string, token: string) {
     const decoded = getPayload(token)
-    console.log(decoded.username)
     let scambio = await scambioModel.findOne({ _id: id, utente2: decoded.username }
     ).exec()
 

@@ -7,7 +7,6 @@ interface wishlistElement {
 }
 
 export async function addWishlistReq(req, res) {
-    console.log("body", req.body);
     const result = req.body as wishlistElement;
     const decoded = getPayload(req.header('x-access-token'));
     if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
@@ -30,9 +29,7 @@ export async function getUserWishlistReq(req, res) {
         const decoded = getPayload(req.header('x-access-token'));
         if (!decoded.id) throw new Error("idUtente is required");
         const wishlist = await getWishlistByUserID(decoded.id);
-        console.log("wishlist", wishlist);
         const libri = await getLibriByISBNs(wishlist.map((element) => element.isbn));
-        console.log("libri", libri);
         res.status(200).send({
             success: true,
             message: "User's wishlist",
@@ -67,17 +64,21 @@ export async function getAllWishlistReq(req, res) {
 
 export async function deleteFromWishlistReq(req, res) {
     try {
-        const result = req.body as wishlistElement;
+        const isbn = req.query.isbn as string;
+        console.log(isbn);
         const decoded = getPayload(req.header('x-access-token'));
-        if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
-        await deleteFromWishlist(decoded.id, result.isbn);
+        if (!isbn) throw new Error("isbn non trovato");
+        await deleteFromWishlist(decoded.id, isbn);
         res.status(200).send({
             success: true,
             message: "Elemento eliminato dalla wishlist",
-            data: {}
+            data: {
+                isbn: isbn
+            }
         });
     } catch (e) {
         res.status(400).send({
+            success: false,
             error: e.message
         });
     }
