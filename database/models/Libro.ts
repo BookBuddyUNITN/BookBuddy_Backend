@@ -2,14 +2,6 @@ import mongoose from 'mongoose';
 
 export const listaGeneri = ['Fantasy', 'Avventura', 'Giallo', 'Horror', 'Storico', 'Romanzo', 'Biografia', 'Saggistica', 'Altro'];
 
-export interface LibroInterface {
-  titolo: string;
-  autore: string;
-  ISBN: string;
-  generi: string[];
-  rating: number;
-  recensioni: recensione[];
-}
 
 export interface CopialibroInterface {
   ISBN: string,
@@ -17,42 +9,17 @@ export interface CopialibroInterface {
   proprietario: string;
 }
 
-export class recensione {
-  testo: string;
-  voto: number;
-  id: string
-  constructor(testo: string, voto: number, id: string) {
-    this.testo = testo;
-    this.voto = voto;
-    this.id = id;
-  }
-}
-
-export class libro {
-  titolo: string;
-  autore: string;
-  ISBN: string;
-  generi: string[];
-  recensioni: recensione[];
-  constructor(titolo: string, autore: string, ISBN: string, generi: string[], recensioni: recensione[]) {
-    this.titolo = titolo;
-    this.autore = autore;
-    this.ISBN = ISBN;
-    this.generi = generi;
-    this.recensioni = recensioni;
-  }
-}
 
 const recensioneSchema = new mongoose.Schema({
   testo: { type: String, required: true },
   voto: { type: Number, required: true },
-  recensioneID: {type: String, required: true}
+  utenteID: {type: String, required: true}
 });
 
 export interface recensioneLibroInterface {
   testo: String,
   voto: Number,
-  recensioneID: String
+  utenteID: String
 }
 
 const copiaLibroSchema = new mongoose.Schema({
