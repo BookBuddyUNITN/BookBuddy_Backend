@@ -61,9 +61,24 @@ export async function addLibroReq(req, res) {
     try {
         const result = req.body as addLibroInterface
         if (!Object.keys(result).length) throw new Error("ISBN is required")
-        addLibro(result.titolo, result.autore, result.ISBN)
-        res.send("result added")
+        const libro = await addLibro(result.titolo, result.autore, result.ISBN)
+        res.status(201).send({
+            success: true,
+            message: "Libro aggiunto",
+            data: {
+                libro: libro
+            }
+        })
     } catch (e) {
+        if (e.message.includes("duplicate key error")) {
+            res.status(201).send({
+                success: true,
+                message: "Libro gia presente",
+                data: {
+                    libro: await getLibro(req.body.ISBN)
+                }
+            })
+        }
         res.status(400).send({
             error: e.message
         })

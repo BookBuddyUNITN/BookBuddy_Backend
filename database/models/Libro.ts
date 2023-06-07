@@ -13,13 +13,15 @@ export interface CopialibroInterface {
 const recensioneSchema = new mongoose.Schema({
   testo: { type: String, required: true },
   voto: { type: Number, required: true },
-  utenteID: {type: String, required: true}
+  utenteID: {type: String, required: true},
+  username: {type: String, required: true}
 });
 
 export interface recensioneLibroInterface {
   testo: String,
   voto: Number,
-  utenteID: String
+  utenteID: String,
+  username: String
 }
 
 const copiaLibroSchema = new mongoose.Schema({
@@ -48,6 +50,7 @@ const libroSchema = new mongoose.Schema({
   recensioni: [recensioneSchema],
 });
 
+libroSchema.index({ ISBN: 1 }, { unique: true });
 copiaLibroSchema.index({ locazione: '2dsphere' });
 
 const Libro = mongoose.model('Libro', libroSchema);

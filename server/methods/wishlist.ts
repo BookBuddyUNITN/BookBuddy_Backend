@@ -1,5 +1,5 @@
 import { addWishlist, getWishlistByUserID, deleteFromWishlist, getAllWishlist } from "../../database/manager/managerWishlist";
-import { addLibroByISBN, getLibriByISBNs } from "../../database/manager/managerLibri";
+import { addLibroByISBN, getLibriByISBNs, getLibro } from "../../database/manager/managerLibri";
 import { getPayload } from "../../database/manager/managerLogin";
 
 interface wishlistElement {
@@ -7,21 +7,35 @@ interface wishlistElement {
 }
 
 export async function addWishlistReq(req, res) {
-    const result = req.body as wishlistElement;
-    const decoded = getPayload(req.header('x-access-token'));
-    if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
-    Promise.all([addLibroByISBN(result.isbn), addWishlist(decoded.id, result.isbn)]).then(( results : any[] ) => {
+    try {
+        const result = req.body as wishlistElement;
+        const decoded = getPayload(req.header('x-access-token'));
+        if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
+        let libro = null;
+        try {
+            libro = await addLibroByISBN(result.isbn);
+            console.log(libro);
+        } catch (e) {
+            if (e.message.includes("duplicate key error")) {
+                try {
+                    libro = await getLibro(result.isbn);
+                } catch (e) {
+                    throw new Error("Libro non trovato");
+                }
+            }
+        }
+        if(libro === null) throw new Error("Libro non trovato");
+        const wishlist = await addWishlist(decoded.id, result.isbn)
         res.status(201).send({
             success: true,
             message: "Elemento aggiunto alla wishlist",
-            data: { idUtente: decoded.id, isbn: result.isbn, libro: results[0] }
+            data: { idUtente: decoded.id, isbn: wishlist.isbn, libro: libro }
         });
-    }).catch((e) => {
-        console.log(e);
+    } catch (e) {
         res.status(400).send({
             error: e.message
         });
-    });
+    };
 }
 
 export async function getUserWishlistReq(req, res) {

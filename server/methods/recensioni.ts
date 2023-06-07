@@ -7,14 +7,13 @@ export async function lasciaRecensione(req, res) {
     if (body.voto as number > 5 || body.voto as number < 0) throw new Error("recensione non valida");
     let decoded = getPayload(req.header('x-access-token'));
     if (!decoded.id) throw new Error("idUtente is required");
-    console.log(decoded.id)
-    lasciaRecensioneLibro(body.testo, body.voto, decoded.id, body.isbn).then((result) => {
+    lasciaRecensioneLibro(body.testo, body.voto, decoded.id, body.isbn, decoded.username).then((result) => {
         res.status(201).send({
             success: true,
             message: "Recensione lasciata",
             data: {
                 libro: result,
-                recensione: {...body, utenteID: decoded.id}
+                recensione: {...body, utenteID: decoded.id, username: decoded.username}
             }
         });
     }).catch((e) => {
