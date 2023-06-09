@@ -14,7 +14,6 @@ export async function addWishlistReq(req, res) {
         let libro = null;
         try {
             libro = await addLibroByISBN(result.isbn);
-            console.log(libro);
         } catch (e) {
             if (e.message.includes("duplicate key error")) {
                 try {

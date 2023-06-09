@@ -6,7 +6,6 @@ export const listaGeneri = ['Fantasy', 'Avventura', 'Giallo', 'Horror', 'Storico
 export interface CopialibroInterface {
   ISBN: string,
   locazione: [number, number];
-  proprietario: string;
 }
 
 

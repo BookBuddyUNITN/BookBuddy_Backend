@@ -46,11 +46,7 @@ export async function addLibro(titolo: string, autore: string, ISBN: string, gen
     return await libro.save();
 }
 
-export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, generi: string[] = [], locazione: [number, number], proprietario: string) {
-    const libroDocument = await Libro.findOne({ ISBN: ISBN });
-    if (!libroDocument) {
-        addLibro(titolo, autore, ISBN, generi)
-    }
+export async function addCopiaLibro(ISBN: string, locazione: [number, number], proprietario: string) {
     const copia = new CopiaLibro({
         ISBN: ISBN, locazione: {
             type: 'Point',
@@ -72,6 +68,10 @@ export async function getLibro(ISBN: string) {
 
 export async function getLibriByISBNs(ISBN: string[]) {
     return await Libro.find({ ISBN: { $in: ISBN } });
+}
+
+export async function getCopieLibroByUser(user: string) {
+    return await CopiaLibro.find({ proprietario: user });
 }
 
 export async function getCopieLibro(ISBN: string) {

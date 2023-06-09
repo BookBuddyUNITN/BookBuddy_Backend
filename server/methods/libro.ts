@@ -1,4 +1,5 @@
-import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro } from "../../database/manager/managerLibri"
+import { getLibri, addLibro, addCopiaLibro, deleteLibro, getLibro, addLibroByISBN } from "../../database/manager/managerLibri"
+import { getPayload } from "../../database/manager/managerLogin"
 
 interface addLibroInterface {
     titolo: NonNullable<string>,
@@ -85,53 +86,35 @@ export async function addLibroReq(req, res) {
     }
 }
 
-export async function addCopiaLibroReq(req, res) {
-    try {
-        const ISBN = req.body.ISBN;
-        if (!ISBN) throw new Error("ISBN richiesto");
-        getLibro(ISBN).then(libro => {
-            // libro trovato -> estrai informazioni dal database
-            const result = req.body as addCopiaLibroInterface;
-            if (!Object.keys(result).length) throw new Error("Errate informazioni sulla copia (locazione e/o proprietario)");
-            const objectCopia = {
-                titolo: libro.titolo,
-                autore: libro.autore,
-                ISBN: libro.ISBN,
-                generi: libro.generi,
-                locazione: result.locazione,
-                proprietario: result.proprietario
-            }
-            addCopiaLibro(objectCopia.titolo, objectCopia.autore, objectCopia.ISBN, objectCopia.generi, objectCopia.locazione, objectCopia.proprietario).then(saved => {
-                res.status(201).send({
-                    success: true,
-                    message: "Copia libro added",
-                    data: saved
-                })
-            });
-        }).catch(err => {
-            // libro non trovato
-            const result = req.body as addCopiaLibroInterfaceCompleta
-            if (!Object.keys(result).length) throw new Error("Copia libro is required")
-            addCopiaLibro(result.titolo, result.autore, result.ISBN, result.generi, result.locazione, result.proprietario).then(saved => {
-                res.status(201).send({
-                    success: true,
-                    message: "Copia libro added",
-                    data: saved
-                })
-            }).catch(err => {
-                res.status(400).send({
-                    success: false,
-                    error: err.message
-                })
-            });
-        });
-    } catch (e) {
-        res.status(400).send({
-            success: false,
-            error: e.message
-        })
-    }
-}
+// export async function addCopiaLibroReq(req, res) {
+//     try {
+//         const result = req.body as { isbn: string };
+//         const decoded = getPayload(req.header('x-access-token'));
+//         let libro = null;
+//         try {
+//             libro = await addLibroByISBN(result.isbn);
+//         } catch (e) {
+//             if (e.message.includes("duplicate key error")) {
+//                 try {
+//                     libro = await getLibro(result.isbn);
+//                 } catch (e) {
+//                     throw new Error("Libro non trovato");
+//                 }
+//             }
+//         }
+//         if (libro === null) throw new Error("Libro non trovato");
+//         const copialibro = await addCopiaLibro(result.isbn, [0,0], decoded.id);
+//         res.status(201).send({
+//             success: true,
+//             message: "Elemento aggiunto alla wishlist",
+//             data: { idUtente: decoded.id, isbn: copialibro.ISBN, libro: libro }
+//         });
+//     } catch (e) {
+//         res.status(400).send({
+//             error: e.message
+//         });
+//     };
+// }
 
 export async function deleteBookReq(req, res) {
     try {
