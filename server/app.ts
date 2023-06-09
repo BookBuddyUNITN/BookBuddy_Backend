@@ -12,28 +12,22 @@ import { recensioneRouter } from "./routes/recensioniRoutes"
 
 const app = express()
 
-export function runServer() {
-    app.use(express.json())
-    app.use(express.urlencoded({ extended: true }))
-    app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 
 
-    
-    app.use("/auth", authRouter)
-    app.use(tokenChecker);
-    app.use("/libro", libriRouter)
-    app.use("/wishlist", wishlistRoutes)
-    app.use("/accordo", accordoRouter)
 
-    app.use("/scambi", scambioRouter);
-    app.use("/libreriaPersonale", libreriaPersonaleRouter)
-    app.use("/ricerca", ricercaRouter);
-    app.use("/recensioni", recensioneRouter);
-    
-    
-    app.listen(process.env.PORT, () => {
-        console.log("Server running on port " + process.env.PORT + "...")
-    })
-}
+app.use("/auth", authRouter)
+app.use(tokenChecker);
+app.use("/libro", libriRouter)
+app.use("/wishlist", wishlistRoutes)
+app.use("/accordo", accordoRouter)
+
+app.use("/scambi", scambioRouter);
+app.use("/libreriaPersonale", libreriaPersonaleRouter)
+app.use("/ricerca", ricercaRouter);
+app.use("/recensioni", recensioneRouter);
+
 
 export default app;

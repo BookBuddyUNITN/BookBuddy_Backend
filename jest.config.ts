@@ -6,5 +6,6 @@ module.exports = {
     },
     moduleFileExtensions: ['ts', 'js'],
     setupFiles: ["<rootDir>/.jest/setEnvVars.ts"],
-    verbose: true
+    verbose: true,
+    collectCoverage: true
 };

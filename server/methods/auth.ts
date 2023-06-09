@@ -26,11 +26,9 @@ function generateToken(username: string, hashedPassword: string, time = 86400) {
 
 export async function login(req, res) {
     // cerca utente con username - hashedPw corrispondenti
-    console.log(req.body.username, req.body.password)
     let hashedPw = crypto.createHash('md5').update(req.body.password).digest('hex').toString();
     const checkUtenteResult = await checkUtente(req.body.username, hashedPw);
     if (!checkUtenteResult) {
-        console.log("utente non trovato")
         res.status(401).send({
             success: false,
             error: "username o password errati"
@@ -40,10 +38,10 @@ export async function login(req, res) {
     var payload = { id: checkUtenteResult, username: req.body.username, password: hashedPw }
     var options = { expiresIn: 86400 } // expires in 24 hours
     var token = jwt.sign(payload, process.env.SUPER_SECRET, options).toString();
-    res.json({
+    res.status(200).send({
         success: true,
         message: 'Enjoy your token!',
-        data: {token: token}
+        data: { token: token }
     });
 }
 
@@ -51,7 +49,9 @@ export async function registrazione(req, res) {
     try {
         const creds = req.body as Credenziali;
         if (!Object.keys(creds).length) throw new Error("oops! credenziali non formattate correttamente");
-        if (!creds.email) throw new Error("email is required");
+        Object.keys(creds).forEach((key) => {
+            if (!creds[key] || creds[key] === "") throw new Error("oops! credenziali non formattate correttamente");
+        });
 
         let hashedPw = crypto.createHash('md5').update(creds.password).digest('hex');
         const token = generateToken(creds.username, hashedPw, Date.now());
@@ -67,7 +67,7 @@ export async function registrazione(req, res) {
             });
 
     } catch (e) {
-        res.status(400).send({
+        res.status(401).send({
             success: false,
             error: e.message
         })
@@ -76,21 +76,21 @@ export async function registrazione(req, res) {
 
 export async function confermaUtente(req, res) {
     const params = req.query as Token;
-    if (!Object.keys(params).length) throw new Error("oops! credenziali non formattate correttamente");
-
     emailConfermata(params.token).then((result) => {
         if (result) {
             res.status(200).send({
                 success: true,
-                message:"utente attivato correttamente",
+                message: "utente attivato correttamente",
                 data: {}
             });
         } else {
-            // TODO: da gestire se il token non è valido in casao di brute force attack
-            throw new Error("token non valido");
+            res.status(401).send({
+                success: false,
+                error: "Utente non attivato"
+            });
         }
     }).catch((err) => {
-        res.status(400).send({
+        res.status(401).send({
             success: false,
             error: err.message
         });
@@ -103,32 +103,29 @@ export async function verificaToken(req, res) {
 
     jwt.verify(params.token, process.env.SUPER_SECRET, function (err, decoded) {
         if (err) {
-            res.status(400).send({
+            res.status(401).send({
                 success: false,
                 error: err.message
             });
         } else {
-            let user = UtenteModel.findOne({username: decoded.username, hashedPassword: decoded.hashedPw}).exec();
-            if(user != null) 
             res.status(200).send({
                 success: true,
-                message:"token valido",
+                message: "token valido",
                 data: {}
             });
-            else throw new Error("invalid credentials")
         }
     });
 }
 
 export async function mandaTokenCambioPw(req, res) {
-    try{
-        let body = req.body as {username: string}
-        if(!Object.keys(body).length) throw new Error("bad request");
+    try {
+        let body = req.body as { username: string }
+        if (!Object.keys(body).length) throw new Error("bad request");
 
         // find user's mail by username
-        let user = await UtenteModel.findOne({username: body.username}).exec();
+        let user = await UtenteModel.findOne({ username: body.username }).exec();
         let mail = user.email;
-        if(!user.emailConfermata) throw new Error("mail non ancora confermata");
+        if (!user.emailConfermata) throw new Error("mail non ancora confermata");
 
         // generate token and remember {user, token} pair
         let token = crypto.randomBytes(8).toString('hex');
@@ -136,7 +133,7 @@ export async function mandaTokenCambioPw(req, res) {
             username: body.username,
             token: token
         })
-        await doc.save().catch(e => {throw new Error(e.message)});
+        await doc.save().catch(e => { throw new Error(e.message) });
         res.status(200).send({
             success: true,
             message: "richiesta cambio pw registrata",
@@ -145,7 +142,7 @@ export async function mandaTokenCambioPw(req, res) {
 
         // send token to user
         // sendMail(mail, user.username, token, "BookBuddyChangePW");
-    } catch(e) {
+    } catch (e) {
         res.status(400).send({
             success: false,
             error: e.message
@@ -155,26 +152,26 @@ export async function mandaTokenCambioPw(req, res) {
 
 export async function cambiaPw(req, res) {
     try {
-        let body = req.body as {token: string, username: string, newpw: string};
-        if(!Object.keys(body).length) throw new Error("bad request");
+        let body = req.body as { token: string, username: string, newpw: string };
+        if (!Object.keys(body).length) throw new Error("bad request");
 
         // check if user requested a change of password
-        let doc = await userTokens.findOne({username: body.username, token: body.token});
-        if(!doc) throw new Error("nessuna richiesta cambio pw registrata");
+        let doc = await userTokens.findOne({ username: body.username, token: body.token });
+        if (!doc) throw new Error("nessuna richiesta cambio pw registrata");
         await doc.deleteOne();
 
         // if so, change pw to new pw in req body
-        let user = await UtenteModel.findOne({username: body.username}).exec();
+        let user = await UtenteModel.findOne({ username: body.username }).exec();
         user.hashedPassword = crypto.createHash('md5').update(body.newpw).digest('hex');
-        await user.save().catch(e => {throw new Error(e.message)});
+        await user.save().catch(e => { throw new Error(e.message) });
 
         res.status(200).send({
             success: true,
             message: "cambio password avvenuto con successo",
             data: {}
         })
-        
-    } catch(e) {
+
+    } catch (e) {
         res.status(400).send({
             success: true,
             error: e.message
