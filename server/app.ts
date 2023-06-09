@@ -12,7 +12,7 @@ import { recensioneRouter } from "./routes/recensioniRoutes"
 
 const app = express()
 
-export default function runServer() {
+export function runServer() {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
     app.use(cors())
@@ -35,3 +35,5 @@ export default function runServer() {
         console.log("Server running on port " + process.env.PORT + "...")
     })
 }
+
+export default app;

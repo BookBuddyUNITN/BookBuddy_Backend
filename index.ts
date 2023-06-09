@@ -1,7 +1,7 @@
 import DB from "./database/db"
 import * as dotenv from 'dotenv'
 
-import runServer from "./server/app"
+import {runServer} from "./server/app"
 
 const envs = dotenv.config()
 
