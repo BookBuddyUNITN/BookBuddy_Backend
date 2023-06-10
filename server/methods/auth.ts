@@ -56,13 +56,13 @@ export async function registrazione(req, res) {
         const token = generateToken(creds.username, hashedPw, Date.now());
 
         addUtente(creds.username, hashedPw, creds.email, token);
-        sendMail(creds.email, creds.username, token, "BookBuddyVerify");
+        //sendMail(creds.email, creds.username, token, "BookBuddyVerify");
 
         res.status(201).send(
             {
                 success: true,
                 message: "utente creato, controlla la tua email per confermare l'account",
-                data: {}
+                data: {token: token}
             });
 
     } catch (e) {

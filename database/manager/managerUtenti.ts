@@ -37,3 +37,10 @@ export async function removeAccordo(accordoID: string, userID: string) {
         return false;
     }
 }
+
+export async function idFromUsername(username: string) {
+    const user = await UtenteModel.findOne({username: username}).exec();
+
+    if(!user) throw new Error("no user found");
+    return user._id.toString()
+}
