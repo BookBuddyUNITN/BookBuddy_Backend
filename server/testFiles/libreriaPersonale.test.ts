@@ -18,7 +18,7 @@ describe('it /accordo path', () => {
         
     });
 
-    it("GET /libreriaPersonale should return 200", async () => {
+    it("GET /libreriaPersonale/list should return 200", async () => {
         const response = await request(app).get("/libreriaPersonale/list")
         .query({ id: utente_test_id})
         .set('Accept', 'application/json')
@@ -26,7 +26,7 @@ describe('it /accordo path', () => {
         expect(response.status).toBe(200);
     });
 
-    it("GET /libreriaPersonale should return 403", async () => {
+    it("GET /libreriaPersonale/list should return 403", async () => {
         const response = await request(app).get("/libreriaPersonale/list")
         .set('Accept', 'application/json')
         .set('x-access-token', "test_token");

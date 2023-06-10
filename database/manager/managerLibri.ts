@@ -64,7 +64,9 @@ export async function removeCopiaLibro(ISBN: string, proprietario: string) {
 }
 
 export async function getLibro(ISBN: string) {
-    return await Libro.findOne({ ISBN: ISBN });
+    const res = await Libro.findOne({ ISBN: ISBN });
+    if (!res) throw new Error("Libro non trovato");
+    return res;
 }
 
 export async function getLibriByISBNs(ISBN: string[]) {
@@ -80,7 +82,9 @@ export async function getCopieLibro(ISBN: string) {
 }
 
 export async function deleteLibro(ISBN: string) {
-    return await Libro.deleteOne({ ISBN: ISBN });
+    const res = await Libro.deleteOne({ ISBN: ISBN });
+    if (res.deletedCount === 0) throw new Error("Libro non trovato");
+    return res;
 }
 
 export async function deleteCopiaLibro(_id: string) {

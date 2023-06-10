@@ -41,13 +41,14 @@ export async function GetLibriReq(req, res) {
 
 export async function getLibroReq(req, res) {
     try {
-        const result = req.body as { ISBN: NonNullable<string> }
+        const result = req.query as { ISBN: NonNullable<string> }
         if (!Object.keys(result).length) throw new Error("ISBN is required")
+        const libro = await getLibro(result.ISBN)
         res.status(200).send({
             success: true,
             message: "Libro trovato",
             data: {
-                libro: await getLibro(result.ISBN)
+                libro: libro
             }
         })
     } catch (e) {
@@ -118,13 +119,15 @@ export async function addLibroReq(req, res) {
 
 export async function deleteBookReq(req, res) {
     try {
-        const result = req.body as { ISBN: NonNullable<string> }
+        const result = req.query as { ISBN: NonNullable<string> }
         if (!Object.keys(result).length) throw new Error("ISBN is required")
-        deleteLibro(result.ISBN)
+        const libro = await deleteLibro(result.ISBN)
         res.status(200).send({
             success: true,
             message: "Libro eliminato",
-            data: {}
+            data: {
+                libro: libro
+            }
         })
     } catch (e) {
         res.status(400).send({
