@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import crypto from 'crypto'
 import userTokens from "../../database/models/PasswordReset";
 import UtenteModel from "../../database/models/Utente";
+import { emailValida } from "../../database/manager/managerMail";
 
 interface Credenziali {
     username: string;
@@ -52,12 +53,13 @@ export async function registrazione(req, res) {
         Object.keys(creds).forEach((key) => {
             if (!creds[key] || creds[key] === "") throw new Error("oops! credenziali non formattate correttamente");
         });
+        if (emailValida(creds.email) === false) throw new Error("oops! email non valida");
 
         let hashedPw = crypto.createHash('md5').update(creds.password).digest('hex');
         const token = generateToken(creds.username, hashedPw, Date.now());
 
-        addUtente(creds.username, hashedPw, creds.email, token);
-        sendMail(creds.email, creds.username, token, "BookBuddyVerify");
+        await addUtente(creds.username, hashedPw, creds.email, token);
+        await sendMail(creds.email, creds.username, token, "BookBuddyVerify");
 
         res.status(201).send(
             {

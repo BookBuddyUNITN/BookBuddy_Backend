@@ -1,26 +1,17 @@
-import app from './app';
 import request from 'supertest';
-
+import app from '../app';
 import jwt from 'jsonwebtoken';
+
 import mongoose from 'mongoose';
 
 describe('it the root path', () => {
 
-    var token;
+    var token = "";
 
     beforeAll(async () => {
-        jest.setTimeout(20000);
-        const payload = {id: "64774612a81420f303d426c3",  username: "testone", password: "test" }
+        await mongoose.connect(process.env.MONGO_LINK.replace("<password>", process.env.MONGO_PASS), { useNewUrlParser: true, useUnifiedTopology: true } as any);
+        const payload = { id: "64774612a81420f303d426c3", username: "testone", password: "test" }
         token = jwt.sign(payload, process.env.SUPER_SECRET, { expiresIn: 86400 });
-        app.locals.db = await mongoose.connect(process.env.MONGO_LINK.replace("<password>", process.env.MONGO_PASS));
-    });
- 
-    afterAll(async () => {
-        await mongoose.connection.close(true);
-    });
-
-    it('app module should be defined', () => {
-        expect(app).toBeDefined();
     });
 
     it("POST /auth/registrazione should return 201", async () => {
@@ -79,6 +70,9 @@ describe('it the root path', () => {
         expect(response.status).toBe(200);
     });
 
+    afterAll(async () => {
+        await mongoose.connection.close();
+    });
 
 });
 
