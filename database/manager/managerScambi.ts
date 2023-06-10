@@ -2,10 +2,11 @@ import scambioModel from '../models/Scambio'
 import { locationInterface } from '../models/Location';
 import { getPayload } from './managerLogin';
 
-export async function createScambio(utente1: string, utente2: string, luogo: locationInterface, data: Date, scambioAccettato: boolean = false) {
+export async function createScambio(utente1: string, utente2: string, libro1: string, libro2 : string, luogo: locationInterface, data: number, scambioAccettato: boolean = false) {
     const scambio = new scambioModel({
         utente1: utente1, utente2: utente2,
-        longitudine: luogo.lon, latitudine: luogo.lat,
+        libro1: libro1, libro2: libro2,
+        locazione: luogo,
         data: data,
         scambioAccettato: scambioAccettato
     });
@@ -17,14 +18,12 @@ export async function createScambio(utente1: string, utente2: string, luogo: loc
     return newId
 }
 
-export async function removeScambio(id: string, token: string) {
-    const decoded = getPayload(token)
-    return scambioModel.deleteOne({ _id: id, utente1: decoded.username })
+export async function removeScambio(id: string) {
+    return scambioModel.deleteOne({ _id: id })
 }
 
-export async function accettaScambio(id: string, token: string) {
-    const decoded = getPayload(token)
-    let scambio = await scambioModel.findOne({ _id: id, utente2: decoded.username }
+export async function accettaScambio(id: string) {
+    let scambio = await scambioModel.findOne({ _id: id }
     ).exec()
 
     if (!Object.keys(scambio).length) {
@@ -34,4 +33,15 @@ export async function accettaScambio(id: string, token: string) {
     scambio.scambioAccettato = true
     await scambio.save()
     return scambio
+}
+
+export async function getScambioById(id: string) {
+    const res = scambioModel.findOne({ _id: id }).exec()
+    return res
+}
+
+export async function checkIfIsOwner(id: string, id_utente: string) {
+    const res = [await scambioModel.exists({ _id: id, utente1: id_utente }), await scambioModel.exists({ _id: id, utente2: id_utente })]
+    if(res[0] || res[1]) return true
+    return res
 }

@@ -41,56 +41,56 @@ describe('it /accordo path', () => {
         };
     });
 
-    it("GET /recensioni should return 200", async () => {
-        const response = await request(app).get("/recensioni")
+    it("GET /recensioni/get should return 200", async () => {
+        const response = await request(app).get("/recensioni/get")
             .query({ isbn: libro_to_review.isbn })
             .set('Accept', 'application/json')
             .set('x-access-token', token);
         expect(response.status).toBe(200);
     });
 
-    it("GET /recensioni should return 400", async () => {
-        const response = await request(app).get("/recensioni")
+    it("GET /recensioni/get should return 400", async () => {
+        const response = await request(app).get("/recensioni/get")
             .query({ isbn: "test_isbn" })
             .set('Accept', 'application/json')
             .set('x-access-token', token);
         expect(response.status).toBe(400);
     });
 
-    it("POST /recensioni should return 200", async () => {
-        const response = await request(app).post("/recensioni")
+    it("POST /recensioni/post should return 200", async () => {
+        const response = await request(app).post("/recensioni/post")
         .send({ testo: "test", voto: 5, isbn: libro_to_review.isbn })
         .set('Accept', 'application/json')
         .set('x-access-token', token);
         expect(response.status).toBe(201);
     });
 
-    it("POST /recensioni should return 400", async () => {
-        const response = await request(app).post("/recensioni")
+    it("POST /recensioni/post should return 400", async () => {
+        const response = await request(app).post("/recensioni/post")
         .send({ testo: "test", voto: 5, isbn: "invalid_isbn" })
         .set('Accept', 'application/json')
         .set('x-access-token', token);
         expect(response.status).toBe(400);
     });
 
-    it("DELETE /recensioni should return 200", async () => {
-        const response = await request(app).delete("/recensioni")
+    it("DELETE /recensioni/delete should return 200", async () => {
+        const response = await request(app).delete("/recensioni/delete")
         .query({ isbn: libro_to_review.isbn, recensione_id: libro_to_review.recensione_id })
         .set('Accept', 'application/json')
         .set('x-access-token', token);
         expect(response.status).toBe(200);
     });
 
-    it("DELETE /recensioni w invalid isbn should return 400", async () => {
-        const response = await request(app).delete("/recensioni")
+    it("DELETE /recensioni/delete w invalid isbn should return 400", async () => {
+        const response = await request(app).delete("/recensioni/delete")
         .query({ isbn: "test_isbn", recensione_id: libro_to_review.recensione_id })
         .set('Accept', 'application/json')
         .set('x-access-token', token);
         expect(response.status).toBe(400);
     });
 
-    it("DELETE /recensioni w invalid recensione_id should return 400", async () => {
-        const response = await request(app).delete("/recensioni")
+    it("DELETE /recensioni/delete w invalid recensione_id should return 400", async () => {
+        const response = await request(app).delete("/recensioni/delete")
         .query({ isbn: libro_to_review.isbn, recensione_id: "invalid_id" })
         .set('Accept', 'application/json')
         .set('x-access-token', token);
