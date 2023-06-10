@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 
 async function checkIfIsOwner(idAccordo: string, idUser: string) {
     const res = await AccordoModel.findOne({ _id: idAccordo })
-    console.log(res.userID_1,res.userID_2)
     return [res.userID_1 === idUser , res.userID_2 === idUser]
 }
 
@@ -16,9 +15,10 @@ export async function addAccordo(token: string, userID_2: string, libro: string,
         const decodedToken = jwt.decode(token) as any;
         const userID_1 = decodedToken.id
 
-        checkIfUserHasBook(libro, userID_1);
+
+        if(!await checkIfUserHasBook(libro, userID_2)) throw "L'utente ha già questo libro";
         libri_proposti.forEach(async libro => {
-            const res = await checkIfUserHasBook(libro, userID_2);
+            const res = await checkIfUserHasBook(libro, userID_1);
             if (!res) throw "Libro non trovato";
         });
 
@@ -30,14 +30,14 @@ export async function addAccordo(token: string, userID_2: string, libro: string,
         promiseRes.forEach(res => {
             if (!res) throw "Utente non trovato";
         });
-        const accordo = new AccordoModel({ userID_1: userID_1, userID_2: userID_2, data: Date.now().toLocaleString('it-it'), libro: libro, libri_proposti: libri_proposti }) as any;
+        const accordo = new AccordoModel({ userID_1: userID_1, userID_2: userID_2, data: Date.now(), libro: libro, libri_proposti: libri_proposti }) as any;
         const res = await accordo.save();
         if (res && res !== null)
             return res;
         else
             throw "Errore nel salvataggio dell'accordo";
     } catch (err) {
-        throw "Errore nella creazione dell'accordo";
+        throw err;
     }
 }
 

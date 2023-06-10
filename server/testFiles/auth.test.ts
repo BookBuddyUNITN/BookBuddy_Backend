@@ -2,6 +2,8 @@ import request from 'supertest';
 import app from '../app';
 import jwt from 'jsonwebtoken';
 
+import UtenteModel from '../../database/models/Utente';
+
 import mongoose from 'mongoose';
 
 describe('it /auth path', () => {
@@ -9,7 +11,7 @@ describe('it /auth path', () => {
     var token = "";
 
     beforeAll(async () => {
-        await mongoose.connect(process.env.MONGO_LINK.replace("<password>", process.env.MONGO_PASS), { useNewUrlParser: true, useUnifiedTopology: true } as any);
+        await mongoose.connect(process.env.MONGO_LINK.replace("<password>", process.env.MONGO_PASS));
         const payload = { id: "64774612a81420f303d426c3", username: "testone", password: "test" }
         token = jwt.sign(payload, process.env.SUPER_SECRET, { expiresIn: 86400 });
     });
@@ -18,7 +20,7 @@ describe('it /auth path', () => {
         const response = await request(app).post("/auth/registrazione").send({
             username: "testone",
             password: "test",
-            email: "test@mail.com"
+            email: "putellistefano@gmail.com"
         }).set('Accept', 'application/json');
         expect(response.status).toBe(201);
     });
@@ -46,7 +48,7 @@ describe('it /auth path', () => {
 
     it("POST /auth/login should return 200", async () => {
         const response = await request(app).post("/auth/login").send({
-            username: "testone",
+            username: "test1",
             password: "test"
         });
         expect(response.status).toBe(200);
@@ -71,6 +73,7 @@ describe('it /auth path', () => {
     });
 
     afterAll(async () => {
+        await UtenteModel.deleteOne({ username: "testone" });
         await mongoose.connection.close();
     });
 

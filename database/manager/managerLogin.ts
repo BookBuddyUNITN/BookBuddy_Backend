@@ -2,7 +2,7 @@ import UtenteModel from "../models/Utente";
 import jwt from "jsonwebtoken"
 
 export async function checkUtente(username: string, hashedPassword: string) { 
-    const found = await UtenteModel.findOne({ username, hashedPassword}); // as UtenteInterface;
+    const found = await UtenteModel.findOne({ username: username, hashedPassword: hashedPassword, emailConfermata: true}); // as UtenteInterface;
     if(!found) {
         return false;
     }
