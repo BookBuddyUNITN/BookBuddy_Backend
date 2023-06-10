@@ -57,7 +57,8 @@ export async function addCopiaLibro(ISBN: string, locazione: [number, number], p
 }
 
 export async function removeCopiaLibro(ISBN: string, proprietario: string) {
-    await CopiaLibro.deleteOne({ ISBN: ISBN, proprietario: proprietario });
+    const res = await CopiaLibro.deleteOne({ ISBN: ISBN, proprietario: proprietario });
+    if (res.deletedCount === 0) throw new Error("Copia libro non trovata");
     const copialibro = await CopiaLibro.findOne({ ISBN: ISBN, proprietario: proprietario });
     if (!copialibro) await Libro.deleteOne({ ISBN: ISBN });
 }
