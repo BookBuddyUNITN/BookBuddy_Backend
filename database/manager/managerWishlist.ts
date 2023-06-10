@@ -14,7 +14,7 @@ export async function getAllWishlist() {
 }
 
 export async function deleteFromWishlist(idUtente: string, isbn: string) {
-    return await Wishlist.deleteOne({ idUtente: idUtente, isbn: isbn });
+    return await Wishlist.findOneAndDelete({ idUtente: idUtente, isbn: isbn });
 }
 
 // for notifications

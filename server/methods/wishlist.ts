@@ -1,38 +1,53 @@
 import { addWishlist, getWishlistByUserID, deleteFromWishlist, getAllWishlist } from "../../database/manager/managerWishlist";
+import { addLibroByISBN, getLibriByISBNs, getLibro } from "../../database/manager/managerLibri";
+import { getPayload } from "../../database/manager/managerLogin";
 
 interface wishlistElement {
-    idUtente: NonNullable<string>,
     isbn: NonNullable<string>,
 }
 
 export async function addWishlistReq(req, res) {
     try {
         const result = req.body as wishlistElement;
+        const decoded = getPayload(req.header('x-access-token'));
         if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
-        await addWishlist(result.idUtente, result.isbn);
+        let libro = null;
+        try {
+            libro = await addLibroByISBN(result.isbn);
+        } catch (e) {
+            if (e.message.includes("duplicate key error")) {
+                try {
+                    libro = await getLibro(result.isbn);
+                } catch (e) {
+                    throw new Error("Libro non trovato");
+                }
+            }
+        }
+        if(libro === null) throw new Error("Libro non trovato");
+        const wishlist = await addWishlist(decoded.id, result.isbn)
         res.status(201).send({
             success: true,
             message: "Elemento aggiunto alla wishlist",
-            data: { idUtente: result.idUtente, isbn: result.isbn }
+            data: { idUtente: decoded.id, isbn: wishlist.isbn, libro: libro }
         });
-    }
-    catch (e) {
+    } catch (e) {
         res.status(400).send({
             error: e.message
         });
-    }
+    };
 }
 
 export async function getUserWishlistReq(req, res) {
     try {
-        const idUtente = req.query.idUtente;
-        if (!idUtente) throw new Error("idUtente is required");
-        const wishlist = await getWishlistByUserID(idUtente);
+        const decoded = getPayload(req.header('x-access-token'));
+        if (!decoded.id) throw new Error("idUtente is required");
+        const wishlist = await getWishlistByUserID(decoded.id);
+        const libri = await getLibriByISBNs(wishlist.map((element) => element.isbn));
         res.status(200).send({
             success: true,
             message: "User's wishlist",
             data: {
-                wishlist: wishlist
+                wishlist: libri
             }
         });
     } catch (e) {
@@ -62,16 +77,21 @@ export async function getAllWishlistReq(req, res) {
 
 export async function deleteFromWishlistReq(req, res) {
     try {
-        const result = req.body as wishlistElement;
-        if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
-        await deleteFromWishlist(result.idUtente, result.isbn);
+        const isbn = req.query.isbn as string;
+        console.log(isbn);
+        const decoded = getPayload(req.header('x-access-token'));
+        if (!isbn) throw new Error("isbn non trovato");
+        await deleteFromWishlist(decoded.id, isbn);
         res.status(200).send({
             success: true,
             message: "Elemento eliminato dalla wishlist",
-            data: {}
+            data: {
+                isbn: isbn
+            }
         });
     } catch (e) {
         res.status(400).send({
+            success: false,
             error: e.message
         });
     }

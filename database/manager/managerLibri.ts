@@ -1,4 +1,35 @@
-import { Libro, CopiaLibro, recensione, libro, listaGeneri } from "../models/Libro";
+import { Libro, CopiaLibro, listaGeneri } from "../models/Libro";
+import axios from "axios";
+
+export interface addlibroInterface {
+    titolo: string,
+    autore: string,
+    ISBN: string
+}
+
+async function translateISBN(isbn: string) {
+    try {
+        const response = await axios.get("https://openlibrary.org/api/books?bibkeys=ISBN:" + isbn + "&jscmd=data&format=json");
+        const data = response.data;
+        if (data["ISBN:" + isbn]) {
+            return {
+                titolo: data["ISBN:" + isbn].title as string,
+                autore: data["ISBN:" + isbn].authors[0].name as string,
+                ISBN: isbn as string
+            }
+        }
+        else {
+            return false;
+        }
+    } catch (e) {
+        return false;
+    }
+}
+
+export async function addLibroByISBN(isbn: string) {
+    const libro = await translateISBN(isbn) as addlibroInterface;
+    return await addLibro(libro.titolo, libro.autore, libro.ISBN);
+}
 
 export async function addLibro(titolo: string, autore: string, ISBN: string, generi: string[] = []) {
     const findGenere = [];
@@ -15,11 +46,7 @@ export async function addLibro(titolo: string, autore: string, ISBN: string, gen
     return await libro.save();
 }
 
-export async function addCopiaLibro(titolo: string, autore: string, ISBN: string, generi: string[] = [], locazione: [number, number], proprietario: string) {
-    const libroDocument = await Libro.findOne({ ISBN: ISBN });
-    if (!libroDocument) {
-        addLibro(titolo, autore, ISBN, generi)
-    }
+export async function addCopiaLibro(ISBN: string, locazione: [number, number], proprietario: string) {
     const copia = new CopiaLibro({
         ISBN: ISBN, locazione: {
             type: 'Point',
@@ -37,6 +64,14 @@ export async function removeCopiaLibro(ISBN: string, proprietario: string) {
 
 export async function getLibro(ISBN: string) {
     return await Libro.findOne({ ISBN: ISBN });
+}
+
+export async function getLibriByISBNs(ISBN: string[]) {
+    return await Libro.find({ ISBN: { $in: ISBN } });
+}
+
+export async function getCopieLibroByUser(user: string) {
+    return await CopiaLibro.find({ proprietario: user });
 }
 
 export async function getCopieLibro(ISBN: string) {

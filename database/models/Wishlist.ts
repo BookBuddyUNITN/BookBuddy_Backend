@@ -10,7 +10,7 @@ const wishlistSchema = new mongoose.Schema({
     isbn: { type: String, required: true },
 });
 
-wishlistSchema.index({ idUtente: 1, isbn: 1 }, { unique: true });
+wishlistSchema.index({ isbn: 1 }, { unique: true });
 
 const Wishlist = mongoose.model('Wishlist', wishlistSchema);
 
