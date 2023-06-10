@@ -10,7 +10,7 @@ export async function addWishlistReq(req, res) {
     try {
         const result = req.body as wishlistElement;
         const decoded = getPayload(req.header('x-access-token'));
-        if (!Object.keys(result).length) throw new Error("userID e isbn sono richiesti");
+        if (!Object.keys(result).length) throw new Error("isbn richiesto");
         let libro = null;
         try {
             libro = await addLibroByISBN(result.isbn);
@@ -51,7 +51,7 @@ export async function getUserWishlistReq(req, res) {
             }
         });
     } catch (e) {
-        res.status(400).send({
+        res.status(403).send({
             error: e.message
         });
     }
@@ -69,7 +69,7 @@ export async function getAllWishlistReq(req, res) {
         });
     }
     catch (e) {
-        res.status(400).send({
+        res.status(403).send({
             error: e.message
         });
     }
@@ -81,7 +81,8 @@ export async function deleteFromWishlistReq(req, res) {
         console.log(isbn);
         const decoded = getPayload(req.header('x-access-token'));
         if (!isbn) throw new Error("isbn non trovato");
-        await deleteFromWishlist(decoded.id, isbn);
+        const del = await deleteFromWishlist(decoded.id, isbn);
+        if (!del) throw new Error("Elemento non trovato nella wishlist");
         res.status(200).send({
             success: true,
             message: "Elemento eliminato dalla wishlist",

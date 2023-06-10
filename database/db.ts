@@ -6,6 +6,6 @@ export default class DB {
         this.db_link = mongo_link.replace("<password>", password)
     }
     async connect() {
-        await mongoose.connect(this.db_link);
+        return await mongoose.connect(this.db_link);
     }
 }

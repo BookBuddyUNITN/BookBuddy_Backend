@@ -57,13 +57,16 @@ export async function addCopiaLibro(ISBN: string, locazione: [number, number], p
 }
 
 export async function removeCopiaLibro(ISBN: string, proprietario: string) {
-    await CopiaLibro.deleteOne({ ISBN: ISBN, proprietario: proprietario });
+    const res = await CopiaLibro.deleteOne({ ISBN: ISBN, proprietario: proprietario });
+    if (res.deletedCount === 0) throw new Error("Copia libro non trovata");
     const copialibro = await CopiaLibro.findOne({ ISBN: ISBN, proprietario: proprietario });
     if (!copialibro) await Libro.deleteOne({ ISBN: ISBN });
 }
 
 export async function getLibro(ISBN: string) {
-    return await Libro.findOne({ ISBN: ISBN });
+    const res = await Libro.findOne({ ISBN: ISBN });
+    if (!res) throw new Error("Libro non trovato");
+    return res;
 }
 
 export async function getLibriByISBNs(ISBN: string[]) {
@@ -79,7 +82,9 @@ export async function getCopieLibro(ISBN: string) {
 }
 
 export async function deleteLibro(ISBN: string) {
-    return await Libro.deleteOne({ ISBN: ISBN });
+    const res = await Libro.deleteOne({ ISBN: ISBN });
+    if (res.deletedCount === 0) throw new Error("Libro non trovato");
+    return res;
 }
 
 export async function deleteCopiaLibro(_id: string) {
@@ -88,6 +93,14 @@ export async function deleteCopiaLibro(_id: string) {
     await CopiaLibro.deleteOne({ _id: _id });
     const copie = await CopiaLibro.findOne({ ISBN: copia.ISBN });
     if (!copie) await Libro.deleteOne({ ISBN: copia.ISBN });
+}
+
+export async function checkIfUserHasBook(id: string, proprietario: string) {
+    return await CopiaLibro.exists({ _id: id, proprietario: proprietario });
+}
+
+export async function checkLibroByID(id: string) {
+    return await CopiaLibro.exists({ _id: id });
 }
 
 export async function getLibri() {

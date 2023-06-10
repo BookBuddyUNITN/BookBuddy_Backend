@@ -17,10 +17,10 @@ const recensioneSchema = new mongoose.Schema({
 });
 
 export interface recensioneLibroInterface {
-  testo: String,
-  voto: Number,
-  utenteID: String,
-  username: String
+  testo: string,
+  voto: number,
+  utenteID: string,
+  username: string
 }
 
 const copiaLibroSchema = new mongoose.Schema({

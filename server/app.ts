@@ -13,27 +13,20 @@ import chatRouter from "./routes/chatRoutes"
 
 const app = express()
 
-export default function runServer() {
-    app.use(express.json())
-    app.use(express.urlencoded({ extended: true }))
-    app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 
+app.use("/auth", authRouter)
+app.use(tokenChecker);
+app.use("/libro", libriRouter)
+app.use("/wishlist", wishlistRoutes)
+app.use("/accordo", accordoRouter)
 
-    
-    app.use("/auth", authRouter)
-    app.use(tokenChecker);
-    app.use("/libro", libriRouter)
-    app.use("/wishlist", wishlistRoutes)
-    app.use("/accordo", accordoRouter)
+app.use("/scambi", scambioRouter);
+app.use("/libreriaPersonale", libreriaPersonaleRouter)
+app.use("/ricerca", ricercaRouter);
+app.use("/recensioni", recensioneRouter);
+app.use("/chat", chatRouter);
 
-    app.use("/scambi", scambioRouter);
-    app.use("/libreriaPersonale", libreriaPersonaleRouter)
-    app.use("/ricerca", ricercaRouter);
-    app.use("/recensioni", recensioneRouter);
-    app.use("/chat", chatRouter);
-    
-    
-    app.listen(process.env.PORT, () => {
-        console.log("Server running on port " + process.env.PORT + "...")
-    })
-}
+export default app;

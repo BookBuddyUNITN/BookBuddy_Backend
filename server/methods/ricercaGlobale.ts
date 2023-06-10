@@ -18,7 +18,7 @@ export async function ricercaGlobaleReq(req, res) {
                     });
                 }
             });
-            console.log(books_info);
+            // console.log(books_info);
             res.status(200).send({
                 success: true,
                 message: "Libri trovati",

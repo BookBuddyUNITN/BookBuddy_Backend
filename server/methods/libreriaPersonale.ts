@@ -5,18 +5,11 @@ import { addLibroByISBN, getLibro } from "../../database/manager/managerLibri";
 
 import { getPayload } from "../../database/manager/managerLogin";
 
-interface addCopiaLibroInterface {
-    titolo: NonNullable<string>,
-    autore: NonNullable<string>,
-    ISBN: NonNullable<string>,
-    locazione: [NonNullable<number>, NonNullable<number>],
-    proprietario: NonNullable<string>
-}
-
 export async function getLibri(req, res) {
     try {
         const decoded = getPayload(req.headers["x-access-token"])
         let libri = await getCopieLibroByUser(decoded.id)
+        if(!libri.length) throw new Error("non hai libri nella tua libreria personale")
         let isbns = libri.map((libro: any) => libro.ISBN)
         let libriCompleti = await getLibriByISBNs(isbns)
         res.status(200).send({
