@@ -55,6 +55,14 @@ export async function deleteCopiaLibro(_id: string) {
     if (!copie) await Libro.deleteOne({ ISBN: copia.ISBN });
 }
 
+export async function checkIfUserHasBook(ISBN: string, proprietario: string) {
+    return await CopiaLibro.exists({ ISBN: ISBN, proprietario: proprietario });
+}
+
+export async function checkLibroByID(id: string) {
+    return await Libro.exists({ _id: id });
+}
+
 export async function getLibri() {
     return await Libro.find();
 }

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 import mongoose from 'mongoose';
 
-describe('it the root path', () => {
+describe('it /auth path', () => {
 
     var token = "";
 

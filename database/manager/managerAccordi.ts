@@ -1,5 +1,6 @@
 import { AccordoModel } from "../models/Accordo";
 import { addAccordoToUtente, removeAccordo, checkUtenteByID } from "./managerUtenti";
+import { checkLibroByID, checkIfUserHasBook } from "./managerLibri";
 
 import jwt from "jsonwebtoken";
 
@@ -10,12 +11,26 @@ async function checkIfIsOwner(idAccordo: string, idUser: string) {
 }
 
 
-export async function addAccordo(token: string, userID_2: string, data: Date, libro: string, libri_proposti: string[]) {
+export async function addAccordo(token: string, userID_2: string, libro: string, libri_proposti: string[]) {
     try {
         const decodedToken = jwt.decode(token) as any;
         const userID_1 = decodedToken.id
-        await Promise.all([checkUtenteByID(userID_1), checkUtenteByID(userID_2)]);
-        const accordo = new AccordoModel({ userID_1: userID_1, userID_2: userID_2, data: data, libro: libro, libri_proposti: libri_proposti }) as any;
+
+        checkIfUserHasBook(libro, userID_1);
+        libri_proposti.forEach(async libro => {
+            const res = await checkIfUserHasBook(libro, userID_2);
+            if (!res) throw "Libro non trovato";
+        });
+
+        const promiseRes = await Promise.all([checkUtenteByID(userID_1), checkUtenteByID(userID_2), checkLibroByID(libro)]);
+        libri_proposti.forEach(async libro => {
+            const res = await checkLibroByID(libro);
+            if (!res) throw "Libro non trovato";
+        });
+        promiseRes.forEach(res => {
+            if (!res) throw "Utente non trovato";
+        });
+        const accordo = new AccordoModel({ userID_1: userID_1, userID_2: userID_2, data: Date.now().toLocaleString('it-it'), libro: libro, libri_proposti: libri_proposti }) as any;
         const res = await accordo.save();
         if (res && res !== null)
             return res;
