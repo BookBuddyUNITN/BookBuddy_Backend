@@ -21,10 +21,13 @@ describe('it /accordo path', () => {
         const payload = { id: utente_test_id, username: "testone", password: "test" }
         token = jwt.sign(payload, process.env.SUPER_SECRET, { expiresIn: 86400 });
 
+        const isbn1 = "978-1-60309-516-7";
+        if (!await Libro.exists({ ISBN: isbn1 })) await Libro.deleteOne({ ISBN: isbn1 });
+
         const libro_review = new Libro({
             titolo: "test",
             autore: "test",
-            ISBN: "978-1-60309-516-7",
+            ISBN: isbn1,
             generi: ["test"],
             recensioni: []
         });
