@@ -1,11 +1,11 @@
-import { lasciaRecensione } from "../methods/recensioni";
+import { lasciaRecensioneReq, eliminaRecensioneLibroReq, getRecensioniLibroReq } from "../methods/recensioni";
 import express from 'express'
 
 export const recensioneRouter = express.Router();
 
-recensioneRouter.post("/libri", lasciaRecensione);
-// recensioneRouter.delete("/libri", eliminaRecensioneLibro);
-// recensioneRouter.get("/libri", getRecensioniLibro);
+recensioneRouter.post("/", lasciaRecensioneReq);
+recensioneRouter.delete("/", eliminaRecensioneLibroReq);
+recensioneRouter.get("/", getRecensioniLibroReq);
 
 // recensioneRouter.post("/utenti", lasciaRecensioneUtente);
 // recensioneRouter.delete("/utenti", rimuoviRecensioneUtente);
