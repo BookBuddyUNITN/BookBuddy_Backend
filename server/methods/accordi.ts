@@ -21,7 +21,7 @@ export function creaAccordo(req, res) {
 }
 
 export function eliminaAccordo(req, res) {
-    deleteAccordo(req.headers["x-access-token"], req.body.id)
+    deleteAccordo(req.headers["x-access-token"], req.query.id)
         .then(() => {
             res.status(200).json({
                 success: true,

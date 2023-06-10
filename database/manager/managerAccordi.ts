@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 async function checkIfIsOwner(idAccordo: string, idUser: string) {
     const res = await AccordoModel.findOne({ _id: idAccordo })
-    return [res.userID_1 === idUser , res.userID_2 === idUser]
+    return [res.userID_1 === idUser, res.userID_2 === idUser]
 }
 
 
@@ -16,7 +16,7 @@ export async function addAccordo(token: string, userID_2: string, libro: string,
         const userID_1 = decodedToken.id
 
 
-        if(!await checkIfUserHasBook(libro, userID_2)) throw "L'utente ha già questo libro";
+        if (!await checkIfUserHasBook(libro, userID_2)) throw "L'utente ha già questo libro";
         libri_proposti.forEach(async libro => {
             const res = await checkIfUserHasBook(libro, userID_1);
             if (!res) throw "Libro non trovato";
@@ -41,23 +41,27 @@ export async function addAccordo(token: string, userID_2: string, libro: string,
     }
 }
 
-export async function deleteAccordo(token : string, id: string) {
-    const decodedToken = jwt.decode(token) as any;
-    const userID = decodedToken.id
-    const res = checkIfIsOwner(id, userID)
-    if (!res[0] || !res[1]) throw "Operazione non permessa!"
+export async function deleteAccordo(token: string, id: string) {
+    try {
+        const decodedToken = jwt.decode(token) as any;
+        const userID = decodedToken.id
+        const res = await checkIfIsOwner(id, userID)
+        if (!res[0] && !res[1]) throw "Operazione non permessa!"
         const accordo = await AccordoModel.findOne({ _id: id }) as any;
-    if (!accordo || accordo === null) {
-        throw "Accordo non trovato";
+        if (!accordo || accordo === null) {
+            throw "Accordo non trovato";
+        }
+        const result = await Promise.all([removeAccordo(id, accordo.userID_1), removeAccordo(id, accordo.userID_2)]) as any;
+        if (!result[0] && !result[1]) {
+            throw "Errore nella rimozione dell'accordo agli utenti";
+        }
+        return await AccordoModel.deleteOne({ _id: id });
+    } catch (err) {
+        throw err;
     }
-    const result = await Promise.all([removeAccordo(id, accordo.userID_1), removeAccordo(id, accordo.userID_2)]) as any;
-    if (!result[0] || !result[1]) {
-        throw "Errore nella rimozione dell'accordo agli utenti";
-    }
-    return await AccordoModel.deleteOne({ _id: id });
 }
 
-export async function setLibroScelto(token : string, id: string, libro: string) {
+export async function setLibroScelto(token: string, id: string, libro: string) {
     const decodedToken = jwt.decode(token) as any;
     const userID = decodedToken.id
     const res = await checkIfIsOwner(id, userID)
