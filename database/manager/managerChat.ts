@@ -14,6 +14,20 @@ export const getChats = async (idUtente: string) => {
     return chats;
 }
 
+export async function writeMessage(chatID: string, type: string, payload: string) {
+    let chatDocument = await Chat.findOne({idAccordo: chatID}).exec();
+    if(!chatDocument) throw new Error("chat not found");
+
+    chatDocument.messaggi.push({type: type, payload: payload});
+
+    await chatDocument.save().catch(e => {throw new Error(e.message)});
+    return {type: type, payload: payload}; 
+}
+
+export async function getChatters(chatID: string) {
+    let chatDocument = await Chat.findOne({idAccordo: chatID}).exec();
+    return [chatDocument.idUtente1, chatDocument.idUtente2];
+}
 
 export const sendMessage = async (idChat: string, idMittente: string, idRicevente: string, type: string, content: string) => {
     const newMessage = new Message({ idChat, idMittente, idRicevente, type, content });
@@ -48,4 +62,29 @@ export const sendMessage = async (idChat: string, idMittente: string, idRicevent
     });
 }
 
+export async function getChatById(chatID: string, amount: number, end: number) {
+    
+    /*
+    end è specificato in relazione ad messaggi.length:
+    se end < 0, end = messaggi.length
+    se end > 0, end = messaggi.length - end
+    */ 
+ 
+    let res = await Chat.findOne({idAccordo: chatID}).exec();
+    console.log("looking for chat with accordoID: ", chatID);
+    console.log(res);
+    if(!res) throw new Error("chat not found");
+
+    if(end < 0) end = res.messaggi.length;
+    else end = res.messaggi.length - end;
+
+    if(end > 0 && end-amount >= 0)
+        return res.messaggi.splice(end - amount, end);
+    else throw new Error("cannot get that many messages");
+}
+
+export async function chatExists(idAccordo: string) {
+    let chat = await Chat.findOne({idAccordo: idAccordo}).exec();
+    return Object.keys(chat).length;
+}
 

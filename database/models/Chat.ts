@@ -35,21 +35,16 @@ interface ChatInterface {
 }
 
 const messageSchema = new mongoose.Schema({
-    idChat: { type: String, required: true },
-    idRicevente: { type: String, required: true },
-    idMittente: { type: String, required: true },
-    type: { type: String, required: true },
-    content: { type: String, required: true },
+    type: { type: String, enum: ['text', 'scambio'], required: true },
+    payload: { type: String, required: true },
 }, { timestamps: true });
 
 const chatSchema = new mongoose.Schema({
     idAccordo: { type: String, required: true },
-    idUtente1: { type: String, required: true },
-    idUtente2: { type: String, required: true },
-    messaggi: { type: [String], required: true }
-},
-    { timestamps: true });
-
+    idUtente1: { type: String, required: true }, // aggiunti per controllare che il token corrsiponda
+    idUtente2: { type: String, required: true }, // corrispondono al campo _id del documento utente
+    messaggi: [messageSchema] 
+});
 
 const pendingListSchema = new mongoose.Schema({
     idUtente: { type: String, required: true },
