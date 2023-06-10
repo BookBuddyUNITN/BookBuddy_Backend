@@ -1,5 +1,4 @@
 import { Libro, CopiaLibro, CopialibroInterface } from "../models/Libro";
-import { listaGeneri } from "../models/Libro";
 
 
 function sortBy(found, ordinamento) {
@@ -33,33 +32,48 @@ export async function search(options: { locazione: [number, number], searchStrin
 
     const locals = await CopiaLibro.find(researchObject) as CopialibroInterface[];
     if (!locals.length) return [];
-    if (!options.generi) options.generi = listaGeneri;
-    if (!options.rating) options.rating = [0, 5];
 
     const final = Libro.find({
         "ISBN": {
             "$in": locals.map(function (el) {
                 return el.ISBN;
             })
-        },
-        "rating": {
-            "$gte": options.rating[0],
-            "$lte": options.rating[1]
-        },
-        "generi": {
-            "$in": options.generi
         }
-    }).then((books) => {
+    });
+    return await final.then((books) => {
         let found = [];
-        if (!(options.searchString == "")) {
+        if (options.rating){
             for (let i = 0; i < books.length; i++) {
+                // compute average rating for every book
                 const book = books[i];
-                if (book.titolo.toLowerCase().includes(options.searchString.toLowerCase()) || book.autore.toLowerCase().includes(options.searchString.toLowerCase()) || book.ISBN.toLowerCase().includes(options.searchString.toLowerCase())) {
+                let sum = 0;
+                if (book.recensioni.length == 0)
+                    continue;
+                for (let j = 0; j < book.recensioni.length; j++) {
+                    sum += book.recensioni[j].voto;
+                }
+                const avg = sum / book.recensioni.length;
+                // if average rating is in range, add book to found
+                if (avg >= options.rating[0] && avg <= options.rating[1]) {
                     found.push(book);
                 }
+                
             }
         } else {
             found = books;
+        }
+        if (found.length == 0)
+            return [];
+        let found2 = [];
+        if (!(options.searchString == "")) {
+            for (let i = 0; i < found.length; i++) {
+                const book = found[i];
+                if (book.titolo.toLowerCase().includes(options.searchString.toLowerCase()) || book.autore.toLowerCase().includes(options.searchString.toLowerCase()) || book.ISBN.toLowerCase().includes(options.searchString.toLowerCase())) {
+                    found2.push(book);
+                }
+            }
+        } else {
+            found2 = found;
         }
         // sorting instructions:
         // 0: sort by distance
@@ -69,14 +83,14 @@ export async function search(options: { locazione: [number, number], searchStrin
         // 4: sort by rating reversed
         // 5: sort by title reversed
         if (options.ordinamento === 0 || options.ordinamento === 1 || options.ordinamento === 2 || options.ordinamento === 3 || options.ordinamento === 4 || options.ordinamento === 5)
-            found = sortBy(found, options.ordinamento);
-        return found;
+            found2 = sortBy(found2, options.ordinamento);
+        return found2;
     }).catch((err) => {
         console.log(err);
         return [];
     });
 
-    return await final;
+
 
     // let books = await Promise.all(locals.map(async (local) => {
     //     const book = await Libro.findOne({ ISBN: local.ISBN }) as LibroInterface;
