@@ -29,4 +29,8 @@ app.use("/ricerca", ricercaRouter);
 app.use("/recensioni", recensioneRouter);
 app.use("/chat", chatRouter);
 
+app.get("/test_report", (req, res) => {
+    res.send("ok")
+})
+
 export default app;
