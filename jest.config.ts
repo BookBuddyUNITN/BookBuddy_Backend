@@ -8,5 +8,14 @@ module.exports = {
     moduleFileExtensions: ['ts', 'js'],
     setupFiles: ["<rootDir>/.jest/setEnvVars.ts"],
     verbose: true,
-    collectCoverage: true
+    collectCoverage: true,
+    reporters: [
+        "default",
+        ["jest-html-reporters", {
+          publicPath: "./test-reports",
+          filename: "report.html",
+          pageTitle: "Test Report",
+          expand: true
+        }]
+      ]
 };

@@ -1,6 +1,4 @@
 import { createChat, getChatById, writeMessage, getChatters, chatExists } from "../../database/manager/managerChat";
-import jwt from "jsonwebtoken"
-import { idFromUsername } from "../../database/manager/managerUtenti";
 import { getPayload } from "../../database/manager/managerLogin";
 
 
