@@ -15,17 +15,17 @@ export const getChats = async (idUtente: string) => {
 }
 
 export async function writeMessage(chatID: string, type: string, payload: string) {
-    let chatDocument = await Chat.findOne({idAccordo: chatID}).exec();
+    let chatDocument = await Chat.findOne({_id: chatID}).exec();
     if(!chatDocument) throw new Error("chat not found");
-
     chatDocument.messaggi.push({type: type, payload: payload});
-
-    await chatDocument.save().catch(e => {throw new Error(e.message)});
+    const res = await chatDocument.save();
+    if(!res) throw new Error("cannot save message");
     return {type: type, payload: payload}; 
 }
 
 export async function getChatters(chatID: string) {
-    let chatDocument = await Chat.findOne({idAccordo: chatID}).exec();
+    let chatDocument = await Chat.findOne({_id: chatID}).exec();
+    if(!chatDocument) throw new Error("chat not found");
     return [chatDocument.idUtente1, chatDocument.idUtente2];
 }
 
@@ -70,21 +70,25 @@ export async function getChatById(chatID: string, amount: number, end: number) {
     se end > 0, end = messaggi.length - end
     */ 
  
-    let res = await Chat.findOne({idAccordo: chatID}).exec();
-    console.log("looking for chat with accordoID: ", chatID);
-    console.log(res);
+    let res = await Chat.findOne({_id: chatID}).exec();
     if(!res) throw new Error("chat not found");
+    if(end < 0) throw new Error("end must be >= 0");
+    if(amount < 0) throw new Error("amount must be >= 0");
+    if(end - amount < 0) throw new Error("end - amount must be >= 0");
 
-    if(end < 0) end = res.messaggi.length;
-    else end = res.messaggi.length - end;
+    if(amount > res.messaggi.length) {
+        amount = res.messaggi.length;
+        end = amount;
+    }
 
-    if(end > 0 && end-amount >= 0)
+    if(end >= 0 && end-amount >= 0)
         return res.messaggi.splice(end - amount, end);
     else throw new Error("cannot get that many messages");
 }
 
 export async function chatExists(idAccordo: string) {
     let chat = await Chat.findOne({idAccordo: idAccordo}).exec();
+    if(!chat) return false;
     return Object.keys(chat).length;
 }
 
