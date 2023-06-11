@@ -30,7 +30,7 @@ app.use("/recensioni", recensioneRouter);
 app.use("/chat", chatRouter);
 
 app.get("/test_report", (req, res) => {
-    res.send("ok")
+    res.sendFile("test_report.html")
 })
 
 export default app;
