@@ -9,6 +9,15 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  MONGO_PASS: ${{secrets.MONGO_PASS}}
+  MONGO_NAME: ${{secrets.MONGO_NAME}}
+  MONGO_LINK: ${{secrets.MONGO_LINK}}
+  SUPER_SECRET: ${{secrets.SUPER_SECRET}}
+  ID_USER_TEST: ${{secrets.ID_USER_TEST}}
+  EMAILJS_PRIVATE: ${{secrets.EMAILJS_PRIVATE}}
+  EMAILJS_PUBLIC: ${{secrets.EMAILJS_PUBLIC}}
+
 jobs:
   test:
 
@@ -18,16 +27,6 @@ jobs:
     # Instead, repository secrets are loaded by default.
     environment: production
     
-    env:
-      MONGO_PASS: ${{secrets.MONGO_PASS}}
-      MONGO_NAME: ${{secrets.MONGO_NAME}}
-      MONGO_LINK: ${{secrets.MONGO_LINK}}
-      PORT: ${{secrets.PORT}}
-      SUPER_SECRET: ${{secrets.SUPER_SECRET}}
-      ID_USER_TEST: ${{secrets.ID_USER_TEST}}
-      EMAILJS_PRIVATE: ${{secrets.EMAILJS_PRIVATE}}
-      EMAILJS_PUBLIC: ${{secrets.EMAILJS_PUBLIC}}
-
     strategy:
       matrix:
         node-version: [18.x]
