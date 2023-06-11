@@ -9,7 +9,7 @@ export default function tokenChecker(req, res, next) {
         if (err) res.status(403).json({ success: false, message: 'Token not valid' })
         else {
             // if everything is good, save in req object for use in other routes
-            // req.loggedUser = decoded;
+            req.loggedUser = decoded;
             next();
         }
     });
