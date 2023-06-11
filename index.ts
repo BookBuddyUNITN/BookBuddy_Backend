@@ -1,11 +1,10 @@
 import DB from "./database/db"
-import * as dotenv from 'dotenv'
 
 import app from "./server/app"
 
-const envs = dotenv.config()
+require('dotenv').config();
 
-const db = new DB(envs.parsed.MONGO_LINK, envs.parsed.MONGO_PASS)
+const db = new DB(process.env.MONGO_LINK, process.env.MONGO_PASS)
 
 //PER AVVIARE USARE -> npm run start:nodemon
 

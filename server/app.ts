@@ -29,8 +29,6 @@ app.use("/ricerca", ricercaRouter);
 app.use("/recensioni", recensioneRouter);
 app.use("/chat", chatRouter);
 
-app.get("/test_report", (req, res) => {
-    res.sendFile("test_report.html")
-})
+
 
 export default app;
